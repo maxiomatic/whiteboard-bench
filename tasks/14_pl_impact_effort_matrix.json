@@ -1,0 +1,276 @@
+{
+  "id": "pl_impact_effort_matrix",
+  "category": "planning",
+  "title": "Impact/effort 2x2 prioritization",
+  "difficulty": "medium",
+  "skills": [
+    "prioritization frameworks",
+    "spatial semantics"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Set up an impact/effort 2x2 and place these features. Impact goes from low at the bottom to high at the top; effort goes from low on the left to high on the right. Label the quadrants 'Quick Wins' (high impact, low effort), 'Big Bets' (high impact, high effort), 'Fill-ins' (low impact, low effort), and 'Money Pit' (low impact, high effort). Features: Dark mode (low impact, low effort), SSO login (high, high), Fix checkout bug (high impact, low effort), Rewrite in Rust (low impact, high effort), Bulk CSV import (high impact, low effort), Animated mascot (low impact, high effort), Offline mode (high, high), Keyboard shortcuts (low, low).",
+      "events": [],
+      "checks": [
+        {
+          "check": "quadrants",
+          "weight": 4,
+          "label": "relative placement is consistent",
+          "items": [
+            {
+              "text": "Dark mode",
+              "v": "lo",
+              "h": "lo"
+            },
+            {
+              "text": "SSO login",
+              "v": "hi",
+              "h": "hi"
+            },
+            {
+              "text": "Fix checkout bug",
+              "v": "hi",
+              "h": "lo"
+            },
+            {
+              "text": "Rewrite in Rust",
+              "v": "lo",
+              "h": "hi"
+            },
+            {
+              "text": "Bulk CSV import",
+              "v": "hi",
+              "h": "lo"
+            },
+            {
+              "text": "Animated mascot",
+              "v": "lo",
+              "h": "hi"
+            },
+            {
+              "text": "Offline mode",
+              "v": "hi",
+              "h": "hi"
+            },
+            {
+              "text": "Keyboard shortcuts",
+              "v": "lo",
+              "h": "lo"
+            }
+          ]
+        },
+        {
+          "check": "nearest_label",
+          "weight": 3,
+          "label": "each feature sits in its labeled quadrant",
+          "labels": [
+            "Quick Wins",
+            "Big Bets",
+            "Fill-ins",
+            "Money Pit"
+          ],
+          "items": [
+            {
+              "text": "Dark mode",
+              "label": "Fill-ins"
+            },
+            {
+              "text": "SSO login",
+              "label": "Big Bets"
+            },
+            {
+              "text": "Fix checkout bug",
+              "label": "Quick Wins"
+            },
+            {
+              "text": "Rewrite in Rust",
+              "label": "Money Pit"
+            },
+            {
+              "text": "Bulk CSV import",
+              "label": "Quick Wins"
+            },
+            {
+              "text": "Animated mascot",
+              "label": "Money Pit"
+            },
+            {
+              "text": "Offline mode",
+              "label": "Big Bets"
+            },
+            {
+              "text": "Keyboard shortcuts",
+              "label": "Fill-ins"
+            }
+          ]
+        },
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "quadrant labels",
+          "where": {
+            "type": [
+              "frame",
+              "text",
+              "shape",
+              "sticky"
+            ]
+          },
+          "items": [
+            "Quick Wins",
+            "Big Bets",
+            "Fill-ins|Fill ins",
+            "Money Pit"
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 30,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Quick Wins",
+          "x": 100,
+          "y": 100,
+          "w": 700,
+          "h": 500
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Big Bets",
+          "x": 850,
+          "y": 100,
+          "w": 700,
+          "h": 500
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Fill-ins",
+          "x": 100,
+          "y": 650,
+          "w": 700,
+          "h": 500
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Money Pit",
+          "x": 850,
+          "y": 650,
+          "w": 700,
+          "h": 500
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Impact ↑",
+          "x": 20,
+          "y": 40,
+          "w": 160
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Effort →",
+          "x": 1400,
+          "y": 1170,
+          "w": 160
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Dark mode",
+          "x": 150,
+          "y": 750
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "SSO login",
+          "x": 900,
+          "y": 200
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Fix checkout bug",
+          "x": 150,
+          "y": 200
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Rewrite in Rust",
+          "x": 900,
+          "y": 750
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Bulk CSV import",
+          "x": 350,
+          "y": 200
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Animated mascot",
+          "x": 1100,
+          "y": 750
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Offline mode",
+          "x": 1100,
+          "y": 200
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Keyboard shortcuts",
+          "x": 350,
+          "y": 750
+        }
+      }
+    ]
+  ]
+}

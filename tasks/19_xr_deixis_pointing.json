@@ -1,0 +1,303 @@
+{
+  "id": "xr_deixis_pointing",
+  "category": "xr_spatial",
+  "title": "Resolve 'here', 'this' and 'that' from pointing",
+  "difficulty": "medium",
+  "skills": [
+    "deixis",
+    "multimodal grounding"
+  ],
+  "setting": "A mixed-reality room. The board is a wall-sized virtual canvas that everyone sees in their headset. People talk and point; pointing and gaze arrive as board coordinates. Layers: 0 is the board surface, 1 is the focus layer floating in front of the wall, -1 is the background layer behind it.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Launch checklist",
+      "x": 100,
+      "y": 100,
+      "w": 900,
+      "h": 700,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "QA sign-off",
+      "x": 200,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Press release",
+      "x": 200,
+      "y": 450,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Update docs",
+      "x": 650,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "frame",
+      "text": "Risks",
+      "x": 1100,
+      "y": 100,
+      "w": 700,
+      "h": 700,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Server capacity",
+      "x": 1200,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "orange"
+    },
+    {
+      "type": "sticky",
+      "text": "Legal review pending",
+      "x": 1200,
+      "y": 450,
+      "author": "human:facilitator",
+      "color": "orange"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:maya",
+      "prompt": "Put a note right here that says 'Ship it Friday'.",
+      "events": [
+        {
+          "op": "point",
+          "actor": "human:maya",
+          "at": [
+            620,
+            540
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "check": "near_point",
+          "weight": 3,
+          "label": "note placed where Maya pointed",
+          "items": [
+            {
+              "text": "Ship it Friday",
+              "point": [
+                620,
+                540
+              ],
+              "radius": 60
+            }
+          ]
+        },
+        {
+          "check": "in_frame",
+          "weight": 1,
+          "label": "in frame",
+          "items": [
+            {
+              "text": "Ship it Friday",
+              "frame": "Launch checklist"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:maya",
+      "prompt": "This one blocks that one. Connect them so it's obvious.",
+      "events": [
+        {
+          "op": "point",
+          "actor": "human:maya",
+          "target": "Legal review pending",
+          "jitter": [
+            15,
+            -10
+          ]
+        },
+        {
+          "op": "point",
+          "actor": "human:maya",
+          "target": "Press release",
+          "jitter": [
+            -20,
+            5
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "check": "graph",
+          "weight": 3,
+          "label": "blocker points at the blocked item",
+          "nodes": [
+            "Legal review pending",
+            "Press release"
+          ],
+          "edges": [
+            [
+              "Legal review pending",
+              "Press release"
+            ]
+          ]
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "no spurious connectors",
+          "selector": {
+            "type": "connector"
+          },
+          "max": 1
+        }
+      ]
+    },
+    {
+      "speaker": "human:maya",
+      "prompt": "Make this one red and move it over to the checklist, right next to QA.",
+      "events": [
+        {
+          "op": "point",
+          "actor": "human:maya",
+          "target": "Server capacity",
+          "jitter": [
+            -12,
+            20
+          ]
+        }
+      ],
+      "checks": [
+        {
+          "check": "property",
+          "weight": 1.5,
+          "label": "recolored the pointed-at item",
+          "items": [
+            {
+              "text": "Server capacity",
+              "field": "color",
+              "value": "red"
+            }
+          ]
+        },
+        {
+          "check": "relation",
+          "weight": 1.5,
+          "label": "placed next to QA",
+          "items": [
+            {
+              "a": "Server capacity",
+              "rel": "near",
+              "b": "QA sign-off",
+              "dist": 260
+            }
+          ]
+        },
+        {
+          "check": "in_frame",
+          "weight": 1,
+          "label": "in frame",
+          "items": [
+            {
+              "text": "Server capacity",
+              "frame": "Launch checklist"
+            }
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 14,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Ship it Friday",
+          "x": 540,
+          "y": 460,
+          "color": "green"
+        }
+      }
+    ],
+    [
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$at": [
+              1295,
+              520
+            ]
+          },
+          "target_id": {
+            "$at": [
+              260,
+              535
+            ]
+          },
+          "label": "blocks"
+        }
+      }
+    ],
+    [
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$at": [
+              1268,
+              300
+            ]
+          },
+          "color": "red"
+        }
+      },
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Server capacity"
+                }
+              },
+              "x": 390,
+              "y": 200
+            }
+          ]
+        }
+      }
+    ]
+  ]
+}

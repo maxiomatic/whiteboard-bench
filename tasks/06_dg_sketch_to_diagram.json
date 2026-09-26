@@ -1,0 +1,561 @@
+{
+  "id": "dg_sketch_to_diagram",
+  "category": "diagramming",
+  "title": "Clean up a hand-drawn sketch into a diagram",
+  "difficulty": "hard",
+  "skills": [
+    "sketch interpretation",
+    "spatial reasoning",
+    "cleanup"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "text",
+      "text": "Sensor",
+      "x": 200,
+      "y": 400,
+      "author": "human:maya",
+      "w": 140
+    },
+    {
+      "type": "text",
+      "text": "Edge Hub",
+      "x": 620,
+      "y": 400,
+      "author": "human:maya",
+      "w": 140
+    },
+    {
+      "type": "text",
+      "text": "Cloud Ingest",
+      "x": 1040,
+      "y": 400,
+      "author": "human:maya",
+      "w": 160
+    },
+    {
+      "type": "text",
+      "text": "Dashboard",
+      "x": 1460,
+      "y": 260,
+      "author": "human:maya",
+      "w": 140
+    },
+    {
+      "type": "text",
+      "text": "Alerts",
+      "x": 1460,
+      "y": 560,
+      "author": "human:maya",
+      "w": 140
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          186,
+          380
+        ],
+        [
+          354,
+          386
+        ],
+        [
+          360,
+          454
+        ],
+        [
+          186,
+          460
+        ],
+        [
+          180,
+          392
+        ],
+        [
+          192,
+          378
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          606,
+          380
+        ],
+        [
+          774,
+          386
+        ],
+        [
+          780,
+          454
+        ],
+        [
+          606,
+          460
+        ],
+        [
+          600,
+          392
+        ],
+        [
+          612,
+          378
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          1026,
+          380
+        ],
+        [
+          1214,
+          386
+        ],
+        [
+          1220,
+          454
+        ],
+        [
+          1026,
+          460
+        ],
+        [
+          1020,
+          392
+        ],
+        [
+          1032,
+          378
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          1446,
+          240
+        ],
+        [
+          1614,
+          246
+        ],
+        [
+          1620,
+          314
+        ],
+        [
+          1446,
+          320
+        ],
+        [
+          1440,
+          252
+        ],
+        [
+          1452,
+          238
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          1446,
+          540
+        ],
+        [
+          1614,
+          546
+        ],
+        [
+          1620,
+          614
+        ],
+        [
+          1446,
+          620
+        ],
+        [
+          1440,
+          552
+        ],
+        [
+          1452,
+          538
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          365,
+          420
+        ],
+        [
+          480.0,
+          424.5
+        ],
+        [
+          595,
+          421
+        ],
+        [
+          579.1661432841041,
+          429.5608984049853
+        ],
+        [
+          595,
+          421
+        ],
+        [
+          579.2411830939324,
+          412.3017421444844
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          785,
+          420
+        ],
+        [
+          900.0,
+          424.5
+        ],
+        [
+          1015,
+          421
+        ],
+        [
+          999.1661432841041,
+          429.5608984049853
+        ],
+        [
+          1015,
+          421
+        ],
+        [
+          999.2411830939324,
+          412.3017421444844
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          1225,
+          405
+        ],
+        [
+          1330.0,
+          349.0
+        ],
+        [
+          1435,
+          285
+        ],
+        [
+          1425.5663194612284,
+          300.32989469932534
+        ],
+        [
+          1435,
+          285
+        ],
+        [
+          1417.0032990624356,
+          285.344609001438
+        ]
+      ],
+      "author": "human:maya"
+    },
+    {
+      "type": "stroke",
+      "points": [
+        [
+          1225,
+          440
+        ],
+        [
+          1330.0,
+          513.0
+        ],
+        [
+          1435,
+          578
+        ],
+        [
+          1417.0595717206488,
+          576.5367730341964
+        ],
+        [
+          1435,
+          578
+        ],
+        [
+          1426.5380082683168,
+          562.1130652442667
+        ]
+      ],
+      "author": "human:maya"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "I sketched our IoT pipeline by hand: the strokes and labels on the board. Turn it into a clean diagram: a proper shape for each labeled box, real connectors that follow my arrows in the same direction, then remove my rough strokes and the loose labels you've replaced. Keep roughly the same layout.",
+      "events": [],
+      "checks": [
+        {
+          "check": "graph",
+          "weight": 5,
+          "label": "topology matches the sketch",
+          "nodes": [
+            "Sensor",
+            "Edge Hub",
+            "Cloud Ingest",
+            "Dashboard",
+            "Alerts"
+          ],
+          "edges": [
+            [
+              "Sensor",
+              "Edge Hub"
+            ],
+            [
+              "Edge Hub",
+              "Cloud Ingest"
+            ],
+            [
+              "Cloud Ingest",
+              "Dashboard"
+            ],
+            [
+              "Cloud Ingest",
+              "Alerts"
+            ]
+          ]
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "shapes created",
+          "selector": {
+            "type": "shape"
+          },
+          "min": 5,
+          "max": 6
+        },
+        {
+          "check": "count",
+          "weight": 1.5,
+          "label": "rough strokes removed",
+          "selector": {
+            "type": "stroke"
+          },
+          "max": 0
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "loose labels removed",
+          "selector": {
+            "type": "text",
+            "author": "human"
+          },
+          "max": 0
+        },
+        {
+          "check": "relation",
+          "weight": 1.5,
+          "label": "layout preserved",
+          "items": [
+            {
+              "a": "Sensor",
+              "rel": "left_of",
+              "b": "Edge Hub"
+            },
+            {
+              "a": "Edge Hub",
+              "rel": "left_of",
+              "b": "Cloud Ingest"
+            },
+            {
+              "a": "Cloud Ingest",
+              "rel": "left_of",
+              "b": "Dashboard"
+            },
+            {
+              "a": "Dashboard",
+              "rel": "above",
+              "b": "Alerts"
+            }
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap",
+          "selector": {
+            "type": [
+              "shape",
+              "text",
+              "sticky"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 24,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 180,
+          "y": 380,
+          "w": 180,
+          "h": 80,
+          "text": "Sensor"
+        },
+        "as": "n0"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 600,
+          "y": 380,
+          "w": 180,
+          "h": 80,
+          "text": "Edge Hub"
+        },
+        "as": "n1"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1020,
+          "y": 380,
+          "w": 200,
+          "h": 80,
+          "text": "Cloud Ingest"
+        },
+        "as": "n2"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1440,
+          "y": 240,
+          "w": 180,
+          "h": 80,
+          "text": "Dashboard"
+        },
+        "as": "n3"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1440,
+          "y": 540,
+          "w": 180,
+          "h": 80,
+          "text": "Alerts"
+        },
+        "as": "n4"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$n0",
+          "target_id": "$n1"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$n1",
+          "target_id": "$n2"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$n2",
+          "target_id": "$n3"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$n2",
+          "target_id": "$n4"
+        }
+      },
+      {
+        "tool": "delete_elements",
+        "args": {
+          "ids": {
+            "$find_all": {
+              "type": "stroke"
+            }
+          }
+        }
+      },
+      {
+        "tool": "delete_elements",
+        "args": {
+          "ids": {
+            "$find_all": {
+              "type": "text",
+              "author": "human"
+            }
+          }
+        }
+      }
+    ]
+  ]
+}

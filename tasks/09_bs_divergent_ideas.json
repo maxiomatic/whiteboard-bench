@@ -1,0 +1,223 @@
+{
+  "id": "bs_divergent_ideas",
+  "category": "brainstorming",
+  "title": "Divergent idea generation",
+  "difficulty": "easy",
+  "skills": [
+    "ideation",
+    "divergence"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Brainstorm with me: ways a public library could attract more teenagers. Put at least 15 ideas as stickies inside a frame called 'Library x Teens', one idea per sticky. Make them varied, not rephrasings of the same idea.",
+      "events": [],
+      "checks": [
+        {
+          "check": "frames",
+          "weight": 1,
+          "label": "frames",
+          "titles": [
+            "Library x Teens"
+          ]
+        },
+        {
+          "check": "count",
+          "weight": 2,
+          "label": "at least 15 ideas in the frame",
+          "selector": {
+            "type": "sticky",
+            "frame": "Library x Teens"
+          },
+          "min": 15
+        },
+        {
+          "check": "distinct",
+          "weight": 2,
+          "label": "ideas are distinct",
+          "selector": {
+            "type": "sticky"
+          },
+          "min": 15
+        },
+        {
+          "check": "max_words",
+          "weight": 1,
+          "label": "sticky-sized ideas",
+          "selector": {
+            "type": "sticky"
+          },
+          "max": 15
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        },
+        {
+          "check": "rubric",
+          "weight": 3,
+          "label": "idea quality (judge)",
+          "question": "Are the ideas varied rather than rephrasings, specific enough to act on, and plausible for a public library to try?"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 36,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Library x Teens",
+          "x": 100,
+          "y": 100,
+          "w": 1100,
+          "h": 920
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Late-night gaming tournaments in the library",
+          "x": 130,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Teen-run podcast studio with free recording gear",
+          "x": 340,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Makerspace with 3D printers and laser cutters",
+          "x": 550,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Manga and graphic novel club with artist visits",
+          "x": 760,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Homework help from college student volunteers",
+          "x": 970,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Anime watch parties with snacks",
+          "x": 130,
+          "y": 380
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Library card unlocks free streaming and ebooks",
+          "x": 340,
+          "y": 380
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Teen advisory board that picks new books",
+          "x": 550,
+          "y": 380
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Coding bootcamp for building mobile games",
+          "x": 760,
+          "y": 380
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Quiet study pods bookable by phone",
+          "x": 970,
+          "y": 380
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Open mic poetry and music nights",
+          "x": 130,
+          "y": 590
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Job skills workshops: resumes, interviews, first jobs",
+          "x": 340,
+          "y": 590
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Book-to-movie screenings with discussion",
+          "x": 550,
+          "y": 590
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Scavenger hunts using augmented reality",
+          "x": 760,
+          "y": 590
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Free phone charging lounge",
+          "x": 970,
+          "y": 590
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Volunteer hours credit for reading to younger kids",
+          "x": 130,
+          "y": 800
+        }
+      }
+    ]
+  ]
+}

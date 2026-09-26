@@ -1,0 +1,407 @@
+{
+  "id": "pl_retro_iterative",
+  "category": "planning",
+  "title": "Run a sprint retro across three rounds",
+  "difficulty": "hard",
+  "skills": [
+    "facilitation templates",
+    "clustering others' notes",
+    "action planning"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green"
+    },
+    "priya": {
+      "name": "Priya",
+      "color": "purple"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Set up a sprint retro board: three columns as frames, 'Went well', 'Didn't go well', and 'Try next', left to right, with a title 'Sprint 42 Retro' above them.",
+      "events": [],
+      "checks": [
+        {
+          "check": "frames",
+          "weight": 2,
+          "label": "frames",
+          "titles": [
+            "Went well",
+            "Didn't go well",
+            "Try next"
+          ]
+        },
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "title",
+          "items": [
+            "Sprint 42 Retro"
+          ]
+        },
+        {
+          "check": "order",
+          "weight": 1,
+          "label": "columns left to right",
+          "axis": "x",
+          "where": {
+            "type": "frame"
+          },
+          "items": [
+            "Went well",
+            "Didn't go well",
+            "Try next"
+          ]
+        },
+        {
+          "check": "relation",
+          "weight": 0.5,
+          "label": "title above columns",
+          "items": [
+            {
+              "a": "Sprint 42 Retro",
+              "rel": "above",
+              "b": "Went well"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Everyone's added their notes. In 'Didn't go well', cluster notes about the same underlying problem side by side under a short header for each problem, with clear space between clusters. Don't delete or reword anyone's notes.",
+      "events": [
+        {
+          "op": "create",
+          "actor": "human:maya",
+          "into_frame": "Went well",
+          "element": {
+            "type": "sticky",
+            "text": "Shipped search on time"
+          }
+        },
+        {
+          "op": "create",
+          "actor": "human:sam",
+          "into_frame": "Went well",
+          "element": {
+            "type": "sticky",
+            "text": "Great pairing sessions"
+          }
+        },
+        {
+          "op": "create",
+          "actor": "human:sam",
+          "into_frame": "Didn't go well",
+          "element": {
+            "type": "sticky",
+            "text": "Deploys kept failing",
+            "color": "pink"
+          }
+        },
+        {
+          "op": "create",
+          "actor": "human:priya",
+          "into_frame": "Didn't go well",
+          "element": {
+            "type": "sticky",
+            "text": "Too many meetings",
+            "color": "pink"
+          }
+        },
+        {
+          "op": "create",
+          "actor": "human:lee",
+          "into_frame": "Didn't go well",
+          "element": {
+            "type": "sticky",
+            "text": "CI pipeline is flaky",
+            "color": "pink"
+          }
+        },
+        {
+          "op": "create",
+          "actor": "human:lee",
+          "into_frame": "Didn't go well",
+          "element": {
+            "type": "sticky",
+            "text": "Standups ran way too long",
+            "color": "pink"
+          }
+        },
+        {
+          "op": "create",
+          "actor": "human:maya",
+          "into_frame": "Didn't go well",
+          "element": {
+            "type": "sticky",
+            "text": "Broken builds slowed us down",
+            "color": "pink"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "check": "clusters",
+          "weight": 4,
+          "label": "notes grouped by underlying problem",
+          "method": "spatial",
+          "gap": 60,
+          "pool": {
+            "type": "sticky",
+            "frame": "Didn't go well"
+          },
+          "groups": [
+            [
+              "Deploys kept failing",
+              "CI pipeline is flaky",
+              "Broken builds slowed us down"
+            ],
+            [
+              "Too many meetings",
+              "Standups ran way too long"
+            ]
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 2,
+          "label": "nobody's notes deleted or reworded"
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "a header per cluster",
+          "selector": {
+            "author": "agent",
+            "frame": "Didn't go well"
+          },
+          "min": 2,
+          "max": 4
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap",
+          "selector": {
+            "frame": "Didn't go well"
+          }
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "For each problem cluster, add one concrete action item to 'Try next' and connect it to that problem's header.",
+      "events": [],
+      "checks": [
+        {
+          "check": "each_connected",
+          "weight": 3,
+          "label": "each action links to a problem header",
+          "from": {
+            "author": "agent",
+            "frame": "Try next"
+          },
+          "to": {
+            "author": "agent",
+            "frame": "Didn't go well"
+          }
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "one action per cluster",
+          "selector": {
+            "author": "agent",
+            "frame": "Try next"
+          },
+          "min": 2,
+          "max": 3
+        },
+        {
+          "check": "rubric",
+          "weight": 1,
+          "label": "actions are concrete (judge)",
+          "question": "Are the action items in 'Try next' concrete, owned or time-bound, and clearly aimed at the problems they connect to?"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 28,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Sprint 42 Retro",
+          "x": 100,
+          "y": 40,
+          "font_size": 40
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Went well",
+          "x": 100,
+          "y": 150,
+          "w": 600,
+          "h": 900
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Didn't go well",
+          "x": 750,
+          "y": 150,
+          "w": 700,
+          "h": 900
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Try next",
+          "x": 1500,
+          "y": 150,
+          "w": 600,
+          "h": 900
+        }
+      }
+    ],
+    [
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Build & deploy reliability",
+          "x": 780,
+          "y": 220,
+          "w": 500
+        },
+        "as": "h1"
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Meeting overload",
+          "x": 780,
+          "y": 520,
+          "w": 400
+        },
+        "as": "h2"
+      },
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Deploys kept failing"
+                }
+              },
+              "x": 780,
+              "y": 270
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "CI pipeline is flaky"
+                }
+              },
+              "x": 960,
+              "y": 270
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Broken builds slowed us down"
+                }
+              },
+              "x": 1140,
+              "y": 270
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Too many meetings"
+                }
+              },
+              "x": 780,
+              "y": 570
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Standups ran way too long"
+                }
+              },
+              "x": 960,
+              "y": 570
+            }
+          ]
+        }
+      }
+    ],
+    [
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Sam: quarantine flaky tests + add CI retries by next sprint",
+          "x": 1530,
+          "y": 220,
+          "color": "green"
+        },
+        "as": "a1"
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Cap standups at 15 min; no-meeting Wednesdays",
+          "x": 1530,
+          "y": 520,
+          "color": "green"
+        },
+        "as": "a2"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$h1",
+          "target_id": "$a1"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$h2",
+          "target_id": "$a2"
+        }
+      }
+    ]
+  ]
+}

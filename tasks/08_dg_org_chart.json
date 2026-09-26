@@ -1,0 +1,289 @@
+{
+  "id": "dg_org_chart",
+  "category": "diagramming",
+  "title": "Org chart with tree layout",
+  "difficulty": "easy",
+  "skills": [
+    "hierarchies",
+    "tree layout"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Make an org chart. CEO Dana Reyes. Reporting to Dana: CTO Omar Haddad, CFO Lin Park, VP Sales Tom Ruiz. Reporting to Omar: Eng Manager Aisha Bello and Security Lead Ken Ito. Reporting to Tom: Account Exec Rosa Diaz. Use a tree layout with managers above their reports and connectors from each manager to each report.",
+      "events": [],
+      "checks": [
+        {
+          "check": "graph",
+          "weight": 4,
+          "label": "reporting lines",
+          "nodes": [
+            "Dana Reyes",
+            "Omar Haddad",
+            "Lin Park",
+            "Tom Ruiz",
+            "Aisha Bello",
+            "Ken Ito",
+            "Rosa Diaz"
+          ],
+          "edges": [
+            [
+              "Dana Reyes",
+              "Omar Haddad"
+            ],
+            [
+              "Dana Reyes",
+              "Lin Park"
+            ],
+            [
+              "Dana Reyes",
+              "Tom Ruiz"
+            ],
+            [
+              "Omar Haddad",
+              "Aisha Bello"
+            ],
+            [
+              "Omar Haddad",
+              "Ken Ito"
+            ],
+            [
+              "Tom Ruiz",
+              "Rosa Diaz"
+            ]
+          ]
+        },
+        {
+          "check": "relation",
+          "weight": 2,
+          "label": "managers above reports",
+          "items": [
+            {
+              "a": "Dana Reyes",
+              "rel": "above",
+              "b": "Omar Haddad"
+            },
+            {
+              "a": "Dana Reyes",
+              "rel": "above",
+              "b": "Lin Park"
+            },
+            {
+              "a": "Dana Reyes",
+              "rel": "above",
+              "b": "Tom Ruiz"
+            },
+            {
+              "a": "Omar Haddad",
+              "rel": "above",
+              "b": "Aisha Bello"
+            },
+            {
+              "a": "Omar Haddad",
+              "rel": "above",
+              "b": "Ken Ito"
+            },
+            {
+              "a": "Tom Ruiz",
+              "rel": "above",
+              "b": "Rosa Diaz"
+            }
+          ]
+        },
+        {
+          "check": "aligned",
+          "weight": 1,
+          "label": "peers share a row",
+          "items": [
+            "Omar Haddad",
+            "Lin Park",
+            "Tom Ruiz"
+          ],
+          "axis": "y"
+        },
+        {
+          "check": "aligned",
+          "weight": 1,
+          "label": "third level shares a row",
+          "items": [
+            "Aisha Bello",
+            "Ken Ito",
+            "Rosa Diaz"
+          ],
+          "axis": "y"
+        },
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "titles included",
+          "items": [
+            "CEO",
+            "CTO",
+            "CFO",
+            "VP Sales",
+            "Eng Manager|Engineering Manager",
+            "Security Lead",
+            "Account Exec|Account Executive"
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap",
+          "selector": {
+            "type": [
+              "shape",
+              "sticky",
+              "text"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 28,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 700,
+          "y": 100,
+          "w": 240,
+          "h": 90,
+          "text": "Dana Reyes, CEO"
+        },
+        "as": "dana"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 250,
+          "y": 300,
+          "w": 240,
+          "h": 90,
+          "text": "Omar Haddad, CTO"
+        },
+        "as": "omar"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 700,
+          "y": 300,
+          "w": 240,
+          "h": 90,
+          "text": "Lin Park, CFO"
+        },
+        "as": "lin"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 1150,
+          "y": 300,
+          "w": 240,
+          "h": 90,
+          "text": "Tom Ruiz, VP Sales"
+        },
+        "as": "tom"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 100,
+          "y": 500,
+          "w": 240,
+          "h": 90,
+          "text": "Aisha Bello, Eng Manager"
+        },
+        "as": "aisha"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 400,
+          "y": 500,
+          "w": 240,
+          "h": 90,
+          "text": "Ken Ito, Security Lead"
+        },
+        "as": "ken"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 1150,
+          "y": 500,
+          "w": 240,
+          "h": 90,
+          "text": "Rosa Diaz, Account Exec"
+        },
+        "as": "rosa"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$dana",
+          "target_id": "$omar"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$dana",
+          "target_id": "$lin"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$dana",
+          "target_id": "$tom"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$omar",
+          "target_id": "$aisha"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$omar",
+          "target_id": "$ken"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$tom",
+          "target_id": "$rosa"
+        }
+      }
+    ]
+  ]
+}

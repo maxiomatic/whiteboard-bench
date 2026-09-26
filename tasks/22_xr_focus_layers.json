@@ -1,0 +1,243 @@
+{
+  "id": "xr_focus_layers",
+  "category": "xr_spatial",
+  "title": "Use depth layers to focus the room",
+  "difficulty": "easy",
+  "skills": [
+    "attention management",
+    "3D affordances"
+  ],
+  "setting": "A mixed-reality room. The board is a wall-sized virtual canvas that everyone sees in their headset. People talk and point; pointing and gaze arrive as board coordinates. Layers: 0 is the board surface, 1 is the focus layer floating in front of the wall, -1 is the background layer behind it.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Pricing workshop",
+      "x": 100,
+      "y": 100,
+      "w": 1400,
+      "h": 800,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Option A: $9/month flat",
+      "x": 150,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Option B: $5/month + usage",
+      "x": 350,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Option C: Free tier + $15 Pro",
+      "x": 550,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Competitor pricing notes",
+      "x": 750,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Old meeting notes (March)",
+      "x": 950,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Team lunch Friday?",
+      "x": 1150,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Hiring plan draft",
+      "x": 150,
+      "y": 420,
+      "author": "human:facilitator",
+      "color": "yellow"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "We're focusing on the pricing decision now. Pull the three pricing options forward into the focus layer, push the reference material (the competitor notes and the old meeting notes) into the background, and leave everything else on the board surface. Then add a floating note in the focus layer that states the decision we need to make.",
+      "events": [],
+      "checks": [
+        {
+          "check": "property",
+          "weight": 4,
+          "label": "items on the right layers",
+          "items": [
+            {
+              "text": "Option A: $9/month flat",
+              "field": "layer",
+              "value": 1
+            },
+            {
+              "text": "Option B: $5/month + usage",
+              "field": "layer",
+              "value": 1
+            },
+            {
+              "text": "Option C: Free tier + $15 Pro",
+              "field": "layer",
+              "value": 1
+            },
+            {
+              "text": "Competitor pricing notes",
+              "field": "layer",
+              "value": -1
+            },
+            {
+              "text": "Old meeting notes (March)",
+              "field": "layer",
+              "value": -1
+            },
+            {
+              "text": "Team lunch Friday?",
+              "field": "layer",
+              "value": 0
+            },
+            {
+              "text": "Hiring plan draft",
+              "field": "layer",
+              "value": 0
+            }
+          ]
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "one focus note added",
+          "selector": {
+            "author": "agent",
+            "layer": 1
+          },
+          "min": 1,
+          "max": 2
+        },
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "focus note states the decision",
+          "where": {
+            "author": "agent",
+            "layer": 1
+          },
+          "items": [
+            "decide|decision|choose|pick"
+          ],
+          "threshold": 0.5
+        },
+        {
+          "check": "rubric",
+          "weight": 1,
+          "label": "decision framing (judge)",
+          "question": "Does the new focus-layer note frame the pricing decision clearly, naming the options being chosen between?"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 14,
+  "reference_solution": [
+    [
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Option A: $9/month flat"
+            }
+          },
+          "layer": 1
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Option B: $5/month + usage"
+            }
+          },
+          "layer": 1
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Option C: Free tier + $15 Pro"
+            }
+          },
+          "layer": 1
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Competitor pricing notes"
+            }
+          },
+          "layer": -1
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Old meeting notes (March)"
+            }
+          },
+          "layer": -1
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Decide: which pricing model do we launch with, A, B, or C?",
+          "x": 700,
+          "y": 560,
+          "w": 320,
+          "h": 140,
+          "color": "blue",
+          "layer": 1
+        }
+      }
+    ]
+  ]
+}

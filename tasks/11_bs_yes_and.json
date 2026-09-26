@@ -1,0 +1,330 @@
+{
+  "id": "bs_yes_and",
+  "category": "brainstorming",
+  "title": "Build on teammates' ideas ('yes, and')",
+  "difficulty": "medium",
+  "skills": [
+    "generative building",
+    "linking",
+    "respecting others' work"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green"
+    },
+    "priya": {
+      "name": "Priya",
+      "color": "purple"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Team offsite ideas",
+      "x": 100,
+      "y": 100,
+      "w": 1600,
+      "h": 1000,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Cooking class together",
+      "x": 200,
+      "y": 200,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Volunteer day at a food bank",
+      "x": 1200,
+      "y": 200,
+      "author": "human:sam",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Escape room challenge",
+      "x": 200,
+      "y": 650,
+      "author": "human:lee",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Hackathon on internal tools",
+      "x": 1200,
+      "y": 650,
+      "author": "human:priya",
+      "color": "yellow"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Build on each of these ideas: for every sticky the team added, add at least two 'yes, and...' stickies that extend it. Place them near the idea they build on, connect each one to its source, and use a different color from the originals.",
+      "events": [],
+      "checks": [
+        {
+          "check": "each_connected",
+          "weight": 4,
+          "label": "every idea has 2+ nearby builds connected",
+          "from": {
+            "type": "sticky",
+            "author": "human"
+          },
+          "to": {
+            "type": "sticky",
+            "author": "agent"
+          },
+          "min": 2,
+          "near": 450
+        },
+        {
+          "check": "property",
+          "weight": 1,
+          "label": "builds use a different color",
+          "items": [
+            {
+              "selector": {
+                "type": "sticky",
+                "author": "agent"
+              },
+              "field": "color",
+              "value": "yellow",
+              "op": "ne"
+            }
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 1,
+          "label": "original ideas untouched"
+        },
+        {
+          "check": "max_words",
+          "weight": 0.5,
+          "label": "max words",
+          "selector": {
+            "type": "sticky",
+            "author": "agent"
+          },
+          "max": 15
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        },
+        {
+          "check": "rubric",
+          "weight": 1,
+          "label": "builds extend their source (judge)",
+          "question": "Does each new sticky genuinely extend the specific idea it is connected to, rather than being generic or unrelated?"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 34,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Cook dishes from each teammate's home country",
+          "x": 420,
+          "y": 120,
+          "color": "blue"
+        },
+        "as": "b00"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Cooking class together"
+            }
+          },
+          "target_id": "$b00"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "End with a shared dinner we cooked",
+          "x": 420,
+          "y": 320,
+          "color": "blue"
+        },
+        "as": "b01"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Cooking class together"
+            }
+          },
+          "target_id": "$b01"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Let the team vote on which charity",
+          "x": 1420,
+          "y": 120,
+          "color": "blue"
+        },
+        "as": "b10"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Volunteer day at a food bank"
+            }
+          },
+          "target_id": "$b10"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Company matches donations per volunteer hour",
+          "x": 1420,
+          "y": 320,
+          "color": "blue"
+        },
+        "as": "b11"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Volunteer day at a food bank"
+            }
+          },
+          "target_id": "$b11"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Mix people from different teams in each squad",
+          "x": 420,
+          "y": 570,
+          "color": "blue"
+        },
+        "as": "b20"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Escape room challenge"
+            }
+          },
+          "target_id": "$b20"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Design our own puzzle room next year",
+          "x": 420,
+          "y": 770,
+          "color": "blue"
+        },
+        "as": "b21"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Escape room challenge"
+            }
+          },
+          "target_id": "$b21"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Demo day with prizes voted by everyone",
+          "x": 1420,
+          "y": 570,
+          "color": "blue"
+        },
+        "as": "b30"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Hackathon on internal tools"
+            }
+          },
+          "target_id": "$b30"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Pair people across departments",
+          "x": 1420,
+          "y": 770,
+          "color": "blue"
+        },
+        "as": "b31"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": {
+            "$find": {
+              "type": "sticky",
+              "query": "Hackathon on internal tools"
+            }
+          },
+          "target_id": "$b31"
+        }
+      }
+    ]
+  ]
+}

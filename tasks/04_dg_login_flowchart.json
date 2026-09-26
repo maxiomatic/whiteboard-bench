@@ -1,0 +1,327 @@
+{
+  "id": "dg_login_flowchart",
+  "category": "diagramming",
+  "title": "Flowchart from a verbal description",
+  "difficulty": "medium",
+  "skills": [
+    "flowcharts",
+    "notation",
+    "layout"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Draw a flowchart of our login flow, top to bottom. Start, then 'Enter email & password', then a decision 'Credentials valid?'. If no, go to 'Show error', which loops back to 'Enter email & password'. If yes, a decision '2FA enabled?': yes goes to 'Verify code' and then 'Dashboard'; no goes straight to 'Dashboard'. Then End. Use ovals for Start and End, diamonds for decisions, rectangles for steps, and label the yes/no branches.",
+      "events": [],
+      "checks": [
+        {
+          "check": "graph",
+          "weight": 5,
+          "label": "flow structure",
+          "nodes": [
+            "Start",
+            "Enter email & password",
+            "Credentials valid",
+            "Show error",
+            "2FA enabled",
+            "Verify code",
+            "Dashboard",
+            "End"
+          ],
+          "edges": [
+            [
+              "Start",
+              "Enter email & password"
+            ],
+            [
+              "Enter email & password",
+              "Credentials valid"
+            ],
+            [
+              "Credentials valid",
+              "Show error",
+              "no"
+            ],
+            [
+              "Show error",
+              "Enter email & password"
+            ],
+            [
+              "Credentials valid",
+              "2FA enabled",
+              "yes"
+            ],
+            [
+              "2FA enabled",
+              "Verify code",
+              "yes"
+            ],
+            [
+              "2FA enabled",
+              "Dashboard",
+              "no"
+            ],
+            [
+              "Verify code",
+              "Dashboard"
+            ],
+            [
+              "Dashboard",
+              "End"
+            ]
+          ]
+        },
+        {
+          "check": "node_kinds",
+          "weight": 2,
+          "label": "shape conventions",
+          "items": [
+            {
+              "text": "Start",
+              "kind": [
+                "ellipse",
+                "rounded_rect"
+              ]
+            },
+            {
+              "text": "End",
+              "kind": [
+                "ellipse",
+                "rounded_rect"
+              ]
+            },
+            {
+              "text": "Credentials valid",
+              "kind": "diamond"
+            },
+            {
+              "text": "2FA enabled",
+              "kind": "diamond"
+            },
+            {
+              "text": "Enter email & password",
+              "kind": [
+                "rect",
+                "rounded_rect"
+              ]
+            },
+            {
+              "text": "Verify code",
+              "kind": [
+                "rect",
+                "rounded_rect"
+              ]
+            }
+          ]
+        },
+        {
+          "check": "order",
+          "weight": 1.5,
+          "label": "reads top to bottom",
+          "axis": "y",
+          "items": [
+            "Start",
+            "Enter email & password",
+            "Credentials valid",
+            "2FA enabled",
+            "Dashboard",
+            "End"
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap",
+          "selector": {
+            "type": [
+              "shape",
+              "text"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 36,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "ellipse",
+          "x": 600,
+          "y": 100,
+          "w": 180,
+          "h": 80,
+          "text": "Start"
+        },
+        "as": "start"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 590,
+          "y": 240,
+          "w": 200,
+          "h": 90,
+          "text": "Enter email & password"
+        },
+        "as": "enter"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "diamond",
+          "x": 590,
+          "y": 390,
+          "w": 200,
+          "h": 130,
+          "text": "Credentials valid?"
+        },
+        "as": "cred"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 950,
+          "y": 410,
+          "w": 180,
+          "h": 90,
+          "text": "Show error"
+        },
+        "as": "err"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "diamond",
+          "x": 590,
+          "y": 590,
+          "w": 200,
+          "h": 130,
+          "text": "2FA enabled?"
+        },
+        "as": "tfa"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 950,
+          "y": 760,
+          "w": 180,
+          "h": 90,
+          "text": "Verify code"
+        },
+        "as": "verify"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 600,
+          "y": 920,
+          "w": 180,
+          "h": 90,
+          "text": "Dashboard"
+        },
+        "as": "dash"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "ellipse",
+          "x": 600,
+          "y": 1070,
+          "w": 180,
+          "h": 80,
+          "text": "End"
+        },
+        "as": "end"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$start",
+          "target_id": "$enter"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$enter",
+          "target_id": "$cred"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$cred",
+          "target_id": "$err",
+          "label": "no"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$err",
+          "target_id": "$enter"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$cred",
+          "target_id": "$tfa",
+          "label": "yes"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$tfa",
+          "target_id": "$verify",
+          "label": "yes"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$tfa",
+          "target_id": "$dash",
+          "label": "no"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$verify",
+          "target_id": "$dash"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$dash",
+          "target_id": "$end"
+        }
+      }
+    ]
+  ]
+}

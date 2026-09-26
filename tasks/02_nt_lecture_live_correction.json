@@ -1,0 +1,251 @@
+{
+  "id": "nt_lecture_live_correction",
+  "category": "note_taking",
+  "title": "Live lecture notes with a correction",
+  "difficulty": "medium",
+  "skills": [
+    "incremental capture",
+    "hierarchy",
+    "revision in place"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Lecture Notes",
+      "x": 100,
+      "y": 100,
+      "w": 1000,
+      "h": 1500,
+      "author": "human:facilitator"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "I'm giving a short talk on photosynthesis. Take structured notes in the 'Lecture Notes' frame as I go. Part 1: Photosynthesis happens in the chloroplasts. The light-dependent reactions take place in the thylakoid membranes and produce ATP and NADPH. Water is split, and oxygen is released as a byproduct.",
+      "events": [],
+      "checks": [
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "part 1 captured",
+          "where": {
+            "frame": "Lecture Notes"
+          },
+          "items": [
+            "chloroplast",
+            "thylakoid",
+            "ATP NADPH",
+            "oxygen|O2"
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Part 2: The Calvin cycle happens in the stroma. It uses the ATP and NADPH to fix carbon dioxide into sugar. The key enzyme is RuBisCO, and it takes about 3 CO2 to make one glucose.",
+      "events": [],
+      "checks": [
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "part 2 captured",
+          "where": {
+            "frame": "Lecture Notes"
+          },
+          "items": [
+            "Calvin cycle",
+            "stroma",
+            "RuBisCO",
+            "CO2 sugar|carbon dioxide sugar"
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Correction: I misspoke earlier. It takes 6 CO2 molecules to make one glucose, not 3. Please fix the notes themselves rather than adding a separate correction note.",
+      "events": [],
+      "checks": []
+    }
+  ],
+  "final_checks": [
+    {
+      "check": "texts_present",
+      "weight": 2,
+      "label": "corrected fact present",
+      "items": [
+        "6 CO2 glucose"
+      ]
+    },
+    {
+      "check": "texts_absent",
+      "weight": 2,
+      "label": "wrong fact removed",
+      "items": [
+        "3 CO2"
+      ]
+    },
+    {
+      "check": "texts_absent",
+      "weight": 1,
+      "label": "fixed in place, no separate correction note",
+      "items": [
+        "correction|misspoke|erratum"
+      ]
+    },
+    {
+      "check": "order",
+      "weight": 1,
+      "label": "notes follow lecture order",
+      "axis": "y",
+      "items": [
+        "chloroplast",
+        "thylakoid",
+        "Calvin cycle",
+        "stroma"
+      ]
+    },
+    {
+      "check": "in_frame",
+      "weight": 1,
+      "label": "notes stay in the frame",
+      "selector": {
+        "author": "agent"
+      },
+      "frame": "Lecture Notes"
+    },
+    {
+      "check": "no_overlap",
+      "weight": 1,
+      "label": "no overlap",
+      "selector": {
+        "author": "agent"
+      }
+    }
+  ],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 28,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Part 1: Light-dependent reactions",
+          "x": 140,
+          "y": 170,
+          "font_size": 30,
+          "w": 700
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Occurs in chloroplasts",
+          "x": 170,
+          "y": 230,
+          "w": 800
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Light reactions: thylakoid membranes",
+          "x": 170,
+          "y": 280,
+          "w": 800
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Produce ATP + NADPH",
+          "x": 170,
+          "y": 330,
+          "w": 800
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Water is split, releasing O2 as a byproduct",
+          "x": 170,
+          "y": 380,
+          "w": 800
+        }
+      }
+    ],
+    [
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Part 2: Calvin cycle",
+          "x": 140,
+          "y": 470,
+          "font_size": 30,
+          "w": 700
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Takes place in the stroma",
+          "x": 170,
+          "y": 530,
+          "w": 800
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Uses ATP + NADPH to fix CO2 into sugar",
+          "x": 170,
+          "y": 580,
+          "w": 800
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "Key enzyme: RuBisCO",
+          "x": 170,
+          "y": 630,
+          "w": 800
+        }
+      },
+      {
+        "tool": "create_text",
+        "args": {
+          "text": "About 3 CO2 per glucose",
+          "x": 170,
+          "y": 680,
+          "w": 800
+        }
+      }
+    ],
+    [
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "3 CO2 per glucose"
+            }
+          },
+          "text": "6 CO2 per glucose"
+        }
+      }
+    ]
+  ]
+}

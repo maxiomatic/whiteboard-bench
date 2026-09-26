@@ -1,0 +1,287 @@
+{
+  "id": "co_undo_restore",
+  "category": "collaboration",
+  "title": "Reorganize, then restore on request",
+  "difficulty": "easy",
+  "skills": [
+    "undo",
+    "memory of prior state"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Ideas",
+      "x": 100,
+      "y": 100,
+      "w": 760,
+      "h": 760,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Weekly demo day",
+      "x": 130,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Better docs search",
+      "x": 350,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "blue"
+    },
+    {
+      "type": "sticky",
+      "text": "Kill unused dashboards",
+      "x": 570,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Async standups",
+      "x": 130,
+      "y": 390,
+      "author": "human:facilitator",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Rotate on-call fairly",
+      "x": 350,
+      "y": 390,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Mentorship pairs",
+      "x": 570,
+      "y": 390,
+      "author": "human:facilitator",
+      "color": "blue"
+    },
+    {
+      "type": "sticky",
+      "text": "Team lunch fund",
+      "x": 130,
+      "y": 610,
+      "author": "human:facilitator",
+      "color": "blue"
+    },
+    {
+      "type": "sticky",
+      "text": "Quarterly hack week",
+      "x": 350,
+      "y": 610,
+      "author": "human:facilitator",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Shorter sprints",
+      "x": 570,
+      "y": 610,
+      "author": "human:facilitator",
+      "color": "yellow"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Sort these into rows by color: all the yellow ones in the top row, blue in the middle row, pink in the bottom row.",
+      "events": [],
+      "checks": [
+        {
+          "check": "aligned",
+          "weight": 1,
+          "label": "yellow row",
+          "selector": {
+            "type": "sticky",
+            "color": "yellow"
+          },
+          "axis": "y"
+        },
+        {
+          "check": "aligned",
+          "weight": 1,
+          "label": "blue row",
+          "selector": {
+            "type": "sticky",
+            "color": "blue"
+          },
+          "axis": "y"
+        },
+        {
+          "check": "aligned",
+          "weight": 1,
+          "label": "pink row",
+          "selector": {
+            "type": "sticky",
+            "color": "pink"
+          },
+          "axis": "y"
+        },
+        {
+          "check": "relation",
+          "weight": 1,
+          "label": "row order",
+          "items": [
+            {
+              "a": "Weekly demo day",
+              "rel": "above",
+              "b": "Better docs search"
+            },
+            {
+              "a": "Better docs search",
+              "rel": "above",
+              "b": "Kill unused dashboards"
+            }
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Hmm, I liked the original arrangement better. Put everything back exactly where it was before you sorted.",
+      "events": [],
+      "checks": [
+        {
+          "check": "matches_snapshot",
+          "weight": 4,
+          "label": "original positions restored",
+          "snapshot": "initial",
+          "selector": {
+            "type": "sticky"
+          },
+          "tol": 3,
+          "requires_change": [
+            "initial",
+            "turn1_end"
+          ]
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 8,
+  "reference_solution": [
+    [
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Weekly demo day"
+                }
+              },
+              "x": 130,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Better docs search"
+                }
+              },
+              "x": 130,
+              "y": 390
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Kill unused dashboards"
+                }
+              },
+              "x": 130,
+              "y": 610
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Async standups"
+                }
+              },
+              "x": 350,
+              "y": 610
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Rotate on-call fairly"
+                }
+              },
+              "x": 350,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Mentorship pairs"
+                }
+              },
+              "x": 350,
+              "y": 390
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Team lunch fund"
+                }
+              },
+              "x": 570,
+              "y": 390
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Quarterly hack week"
+                }
+              },
+              "x": 570,
+              "y": 610
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Shorter sprints"
+                }
+              },
+              "x": 570,
+              "y": 170
+            }
+          ]
+        }
+      }
+    ],
+    [
+      {
+        "tool": "undo",
+        "args": {}
+      }
+    ]
+  ]
+}

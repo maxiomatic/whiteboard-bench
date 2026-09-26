@@ -1,0 +1,331 @@
+{
+  "id": "bs_dot_vote_converge",
+  "category": "brainstorming",
+  "title": "Converge after dot voting, then handle late votes",
+  "difficulty": "medium",
+  "skills": [
+    "convergence",
+    "reading state",
+    "reacting to change"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Ideas",
+      "x": 100,
+      "y": 100,
+      "w": 900,
+      "h": 560,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "frame",
+      "text": "Next Steps",
+      "x": 1100,
+      "y": 100,
+      "w": 760,
+      "h": 300,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Referral program",
+      "x": 130,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 7
+    },
+    {
+      "type": "sticky",
+      "text": "Free tier",
+      "x": 340,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 2
+    },
+    {
+      "type": "sticky",
+      "text": "Annual discount",
+      "x": 550,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 5
+    },
+    {
+      "type": "sticky",
+      "text": "Webinar series",
+      "x": 760,
+      "y": 170,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 1
+    },
+    {
+      "type": "sticky",
+      "text": "Partner integrations",
+      "x": 130,
+      "y": 380,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 6
+    },
+    {
+      "type": "sticky",
+      "text": "Student pricing",
+      "x": 340,
+      "y": 380,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 3
+    },
+    {
+      "type": "sticky",
+      "text": "Community forum",
+      "x": 550,
+      "y": 380,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 4
+    },
+    {
+      "type": "sticky",
+      "text": "Podcast ads",
+      "x": 760,
+      "y": 380,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "votes": 0
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Dot voting is done. Move the top 3 ideas by votes into 'Next Steps', ordered left to right by votes, and tell us in chat which three made it and their vote counts.",
+      "events": [],
+      "checks": [
+        {
+          "check": "in_frame",
+          "weight": 3,
+          "label": "top 3 moved",
+          "items": [
+            {
+              "text": "Referral program",
+              "frame": "Next Steps"
+            },
+            {
+              "text": "Partner integrations",
+              "frame": "Next Steps"
+            },
+            {
+              "text": "Annual discount",
+              "frame": "Next Steps"
+            }
+          ]
+        },
+        {
+          "check": "order",
+          "weight": 1,
+          "label": "ordered by votes",
+          "axis": "x",
+          "items": [
+            "Referral program",
+            "Partner integrations",
+            "Annual discount"
+          ]
+        },
+        {
+          "check": "said",
+          "weight": 1,
+          "label": "reported results",
+          "items": [
+            "Referral 7",
+            "Partner integrations 6",
+            "Annual discount 5"
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 1,
+          "label": "ideas not reworded"
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Sam just cast his late votes. Update Next Steps if the top three changed, keep them ordered by votes left to right, and tell us what changed.",
+      "events": [
+        {
+          "op": "vote",
+          "actor": "human:sam",
+          "target": "Community forum",
+          "count": 4
+        }
+      ],
+      "checks": [
+        {
+          "check": "in_frame",
+          "weight": 3,
+          "label": "top 3 updated",
+          "items": [
+            {
+              "text": "Community forum",
+              "frame": "Next Steps"
+            },
+            {
+              "text": "Referral program",
+              "frame": "Next Steps"
+            },
+            {
+              "text": "Partner integrations",
+              "frame": "Next Steps"
+            },
+            {
+              "text": "Annual discount",
+              "frame": "Ideas"
+            }
+          ]
+        },
+        {
+          "check": "order",
+          "weight": 1,
+          "label": "re-ordered by votes",
+          "axis": "x",
+          "items": [
+            "Community forum",
+            "Referral program",
+            "Partner integrations"
+          ]
+        },
+        {
+          "check": "said",
+          "weight": 1,
+          "label": "explained the change",
+          "items": [
+            "Community forum"
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 1,
+          "label": "ideas not reworded"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 12,
+  "reference_solution": [
+    [
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Referral program"
+                }
+              },
+              "x": 1130,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Partner integrations"
+                }
+              },
+              "x": 1330,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Annual discount"
+                }
+              },
+              "x": 1530,
+              "y": 170
+            }
+          ]
+        }
+      },
+      {
+        "tool": "say",
+        "args": {
+          "message": "Top 3: Referral program (7 votes), Partner integrations (6), Annual discount (5)."
+        }
+      }
+    ],
+    [
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Annual discount"
+                }
+              },
+              "x": 550,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Community forum"
+                }
+              },
+              "x": 1130,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Referral program"
+                }
+              },
+              "x": 1330,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Partner integrations"
+                }
+              },
+              "x": 1530,
+              "y": 170
+            }
+          ]
+        }
+      },
+      {
+        "tool": "say",
+        "args": {
+          "message": "Community forum jumped to 8 votes and is now first. Annual discount (5) dropped out and went back to Ideas. New order: Community forum 8, Referral program 7, Partner integrations 6."
+        }
+      }
+    ]
+  ]
+}
