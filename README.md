@@ -24,9 +24,16 @@ The `/whiteboard-bench` skill in `.claude/skills/whiteboard-bench/` runs tasks w
 In Claude Code, from the repo root:
 
 ```
-/whiteboard-bench 08                 # one task, player on this session's model
-/whiteboard-bench 08 --model haiku   # choose the player's model
+/whiteboard-bench 08                          # one task, player on this session's model
+/whiteboard-bench 08 --model haiku            # choose the player's model
+/whiteboard-bench 04,09,16                    # a few tasks
+/whiteboard-bench diagramming --model sonnet  # a category
+/whiteboard-bench smoke                       # the first task of each category (6)
+/whiteboard-bench all                         # all 22
+/whiteboard-bench all --dry-run               # show what would run, spawn nothing
 ```
+
+`just sub-list` shows every task with its number, category, turn count and whether it has a rubric check. Defaults (what runs with no selector, which model) live in `.claude/skills/whiteboard-bench/config.toml`, and each run records the settings it used in its `manifest.json`.
 
 Two hooks in the player's definition enforce the rules at runtime. `guard_tools.py` denies any tool that isn't a board tool, and `stop_gate.py` stops the player from quitting before the session is over (it blocks once, then lets a stuck player go). Each run writes `runs/subagents-<model>-<timestamp>/` with a `result.json` per task, plus `results.json` and `report.html` in the same format as API runs. Claude Code only starts the player's board server and hooks after you trust the repo folder. Subagent runs use Claude Code's agent loop, so compare them with other subagent runs rather than with API runs.
 

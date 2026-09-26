@@ -1,0 +1,12 @@
+# Defaults for /whiteboard-bench runs. Every key can be overridden per run
+# with a flag (see SKILL.md), and each run records the values it used in
+# runs/<run>/manifest.json.
+
+# What to run when no selector is given:
+#   a task (09, bs_divergent_ideas), a list (04,09,16), a category
+#   (diagramming), "smoke" (the first task of each category) or "all"
+select = "smoke"
+
+# Model the players run on: haiku | sonnet | opus | fable | a full model id |
+# "inherit" (the model of the session that runs /whiteboard-bench)
+model = "inherit"

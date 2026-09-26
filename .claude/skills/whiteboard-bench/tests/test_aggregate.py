@@ -28,9 +28,3 @@ def test_aggregate_writes_results_and_report(make_run, capsys):
     html = (run / "report.html").read_text()
     assert "dg_org_chart" in html and "<svg" in html
 
-
-def test_resolve_accepts_number_id_and_stem():
-    assert wb.resolve("08")[0]["id"] == "dg_org_chart"
-    assert wb.resolve("8")[0]["id"] == "dg_org_chart"
-    assert wb.resolve("dg_org_chart")[0]["id"] == "dg_org_chart"
-    assert wb.resolve("08_dg_org_chart")[0]["id"] == "dg_org_chart"

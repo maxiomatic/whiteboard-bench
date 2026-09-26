@@ -46,7 +46,11 @@ build-tasks:
 
 # --- /whiteboard-bench: run the benchmark with Claude Code subagents ---
 
-# Create a run for a task and make it the active run
+# List every task: number, id, category, turns, rubric check (no tokens)
+sub-list:
+    @uv run --quiet --script {{skill}}/scripts/wb.py list
+
+# Create a run and make it active: just sub-new [selector] [--model M] [--dry-run]
 sub-new *args:
     @uv run --quiet --script {{skill}}/scripts/wb.py new {{args}}
 
