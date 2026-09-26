@@ -17,6 +17,19 @@ Run `just` to list every command.
 
 Each run writes `runs/<agent>-<timestamp>/results.json` and a self-contained `report.html` with per-check scores and an SVG snapshot of the board after every turn. To see what a report looks like without running anything, open [`docs/sample-report.html`](docs/sample-report.html), a run of the replay agent.
 
+## Run with Claude Code subagents (no API key)
+
+The `/whiteboard-bench` skill in `.claude/skills/whiteboard-bench/` runs tasks with Claude Code subagents instead of the API. Each task gets one `wbench-player` subagent (`.claude/agents/wbench-player.md`). The player talks to its own board server over MCP, sees only the whiteboard tools, and gets the same instructions an API run gets. The unmodified harness grades the result, and scores never reach the player.
+
+In Claude Code, from the repo root:
+
+```
+/whiteboard-bench 08                 # one task, player on this session's model
+/whiteboard-bench 08 --model haiku   # choose the player's model
+```
+
+Each run writes `runs/subagents-<model>-<timestamp>/` with a `result.json` per task, plus `results.json` and `report.html` in the same format as API runs. Claude Code only starts the player's board server after you trust the repo folder. Subagent runs use Claude Code's agent loop, so compare them with other subagent runs rather than with API runs.
+
 ## What it tests
 
 Real whiteboard sessions are social and iterative. Someone talks while someone else writes, the plan changes halfway through, a colleague is still presenting from one corner, and "put it here" only makes sense if you saw where they pointed. The tasks are built around those situations rather than around drawing a single perfect diagram.
@@ -191,6 +204,8 @@ scripts/build_tasks.py
 tasks/*.json
 tests/test_smoke.py
 justfile          every command
+.claude/skills/whiteboard-bench/   /whiteboard-bench: run with Claude Code subagents
+.claude/agents/wbench-player.md    the subagent under test
 pyproject.toml    uv project and dev tools
 ```
 
