@@ -22,6 +22,8 @@ import pathlib
 import queue
 import sys
 import threading
+import time
+import uuid
 
 ROOT = pathlib.Path(os.environ.get("WBENCH_ROOT") or pathlib.Path(__file__).resolve().parents[4])
 sys.path.insert(0, str(ROOT))
@@ -82,6 +84,25 @@ class Session:
         self.agent = None
         self.thread = None
         self.complete = False
+        self.token = uuid.uuid4().hex
+        self.calls = 0
+        self.turn = 0
+
+    # -- files ---------------------------------------------------------------
+    def _owner(self) -> bool:
+        """False once `wb.py retry` has archived this attempt: a stale player must not write."""
+        try:
+            return (self.task_dir / "claim").read_text() == self.token
+        except FileNotFoundError:
+            return False
+
+    def _status(self, state: str, **extra):
+        if not self._owner():
+            return
+        data = {"state": state, "turn": self.turn, "calls": self.calls, "updated": time.time(), **extra}
+        tmp = self.task_dir / "status.json.tmp"
+        tmp.write_text(json.dumps(data))
+        tmp.replace(self.task_dir / "status.json")
 
     # -- begin -------------------------------------------------------------
     def begin(self, task_id: str) -> dict:
@@ -93,11 +114,15 @@ class Session:
         task_dir = self.run_dir / task_id
         task_dir.mkdir(parents=True, exist_ok=True)
         try:
-            os.close(os.open(task_dir / "claim", os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+            fd = os.open(task_dir / "claim", os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         except FileExistsError:
             return {"ok": False, "error": f"task '{task_id}' was already claimed by another player"}
+        os.write(fd, self.token.encode())
+        os.close(fd)
         self.task = json.loads((ROOT / "tasks" / manifest["files"][task_id]).read_text())
         self.task_dir = task_dir
+        self.turn = 1
+        self._status("playing")
         self.agent = BridgeAgent()
         self.thread = threading.Thread(target=self._run, daemon=True)
         self.thread.start()
@@ -111,11 +136,14 @@ class Session:
         try:
             result = run_task(self.task, self.agent, render=render_svg)
         except Exception as e:  # the harness itself failed: surface it rather than hang
+            self._status("error", error=f"{type(e).__name__}: {e}")
             self.agent.outbox.put(("error", f"{type(e).__name__}: {e}"))
             return
         if self.agent.closed:
             return
-        (self.task_dir / "result.json").write_text(json.dumps(result))
+        if self._owner():
+            (self.task_dir / "result.json").write_text(json.dumps(result))
+            self._status("done")
         self.agent.outbox.put(("complete", None))
 
     # -- board tools ---------------------------------------------------------
@@ -126,10 +154,14 @@ class Session:
             return {"ok": False, "error": "the session is over; reply with one line and stop"}
         self.agent.inbox.put((name, args))
         kind, payload = self.agent.outbox.get()
+        self.calls += 1
         if kind == "result":
+            self._status("playing")
             return payload
         res = dict(getattr(self.agent, "turn_end", {}) or {})
         if kind == "message":
+            self.turn += 1
+            self._status("playing")
             res.update(turn_over=True, next_message=payload)
         elif kind == "complete":
             self.complete = True
@@ -142,6 +174,7 @@ class Session:
     def close(self):
         if self.agent and not self.complete:
             self.agent.inbox.put(None)
+            self._status("abandoned")
 
 
 def active_run_dir() -> pathlib.Path:

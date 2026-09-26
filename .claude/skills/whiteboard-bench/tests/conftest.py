@@ -19,6 +19,6 @@ def make_run(tmp_path):
         run = tmp_path / "run"
         run.mkdir()
         (run / "manifest.json").write_text(json.dumps({
-            "config": {"select": ",".join(task_ids), "model": "test"}, "tasks": list(task_ids), "files": {t: index[t]["file"] for t in task_ids}}))
+            "config": {"select": ",".join(task_ids), "model": "test", "concurrency": 2, "retries": 1, "stall_minutes": 10}, "tasks": list(task_ids), "files": {t: index[t]["file"] for t in task_ids}}))
         return run
     return _make

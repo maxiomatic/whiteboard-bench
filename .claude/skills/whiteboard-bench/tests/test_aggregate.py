@@ -28,3 +28,21 @@ def test_aggregate_writes_results_and_report(make_run, capsys):
     html = (run / "report.html").read_text()
     assert "dg_org_chart" in html and "<svg" in html
 
+
+
+def test_aggregate_merges_runs_and_timing(make_run, tmp_path, monkeypatch, capsys):
+    monkeypatch.setattr(wb, "RUNS", tmp_path / "runs")
+    first = make_run("dg_org_chart")
+    finish(first, "dg_org_chart")
+    wb.main(["timing", str(first), "dg_org_chart", "--tokens", "1000", "--ms", "10"])
+    second = first.parent / "second"
+    second.mkdir()
+    (second / "manifest.json").write_text((first / "manifest.json").read_text().replace("dg_org_chart", "bs_yes_and"))
+    finish(second, "bs_yes_and")
+    capsys.readouterr()
+    wb.main(["aggregate", str(first), str(second)])
+    out = json.loads(capsys.readouterr().out)
+    assert out["tasks"] == 2 and out["total_tokens"] == 1000
+    assert "combined-" in out["report"]
+    results = json.loads((tmp_path / "runs" / out["report"].split("/")[-2] / "results.json").read_text())
+    assert len(results["summary"]["runs"]) == 2

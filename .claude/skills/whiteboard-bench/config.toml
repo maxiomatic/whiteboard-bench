@@ -10,3 +10,12 @@ select = "smoke"
 # Model the players run on: haiku | sonnet | opus | fable | a full model id |
 # "inherit" (the model of the session that runs /whiteboard-bench)
 model = "inherit"
+
+# Players running at once. Lower it to spread cost over time; raise it to finish sooner
+concurrency = 6
+
+# Extra attempts for a task whose player disconnected, errored or stalled
+retries = 1
+
+# A player with no tool call for this long counts as stalled and is retried
+stall_minutes = 10

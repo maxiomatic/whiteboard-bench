@@ -33,7 +33,9 @@ In Claude Code, from the repo root:
 /whiteboard-bench all --dry-run               # show what would run, spawn nothing
 ```
 
-`just sub-list` shows every task with its number, category, turn count and whether it has a rubric check. Defaults (what runs with no selector, which model) live in `.claude/skills/whiteboard-bench/config.toml`, and each run records the settings it used in its `manifest.json`.
+`just sub-list` shows every task with its number, category, turn count and whether it has a rubric check. Defaults live in `.claude/skills/whiteboard-bench/config.toml`: what runs with no selector, the model, how many players run at once (`concurrency`), how often a failed task is retried (`retries`) and when a silent player counts as stalled (`stall_minutes`). Each run records the settings it used in its `manifest.json`.
+
+Players run in parallel up to `concurrency`. The orchestrator follows a Monitor feed (`just sub-watch <run>`) instead of polling. A player that disconnects, errors or stalls is retried, and its files are archived first, so a stale player can't write into the new attempt. Token use per task comes from each player's completion notice and is summed in the report. `/whiteboard-bench resume <run>` requeues whatever didn't finish, and `just sub-aggregate <run> <run> ...` merges separate runs (say, one category at a time) into one report.
 
 Two hooks in the player's definition enforce the rules at runtime. `guard_tools.py` denies any tool that isn't a board tool, and `stop_gate.py` stops the player from quitting before the session is over (it blocks once, then lets a stuck player go). Each run writes `runs/subagents-<model>-<timestamp>/` with a `result.json` per task, plus `results.json` and `report.html` in the same format as API runs. Claude Code only starts the player's board server and hooks after you trust the repo folder. Subagent runs use Claude Code's agent loop, so compare them with other subagent runs rather than with API runs.
 

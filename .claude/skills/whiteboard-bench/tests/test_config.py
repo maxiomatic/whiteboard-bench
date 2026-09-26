@@ -80,7 +80,7 @@ def test_dry_run_creates_nothing(tmp_path, monkeypatch, capsys):
 def test_new_records_resolved_config(tmp_path, monkeypatch, capsys):
     out = new(tmp_path, monkeypatch, capsys, "diagramming", "--model", "haiku", config='select = "09"\n')
     manifest = json.loads((tmp_path / "runs" / out["run"].split("/")[-1] / "manifest.json").read_text())
-    assert manifest["config"] == {"select": "diagramming", "model": "haiku"}
+    assert manifest["config"] == {**wb.DEFAULTS, "select": "diagramming", "model": "haiku"}
     assert manifest["tasks"] == out["tasks"] and len(out["tasks"]) == 5
     assert (tmp_path / "runs" / ".active").read_text() == out["run"]
 
@@ -94,3 +94,9 @@ def test_shipped_config_is_valid():
     cfg = wb.load_config()
     assert set(cfg) == set(wb.DEFAULTS)
     wb.resolve(cfg["select"])
+
+
+@pytest.mark.parametrize("line", ["concurrency = 0", "retries = -1", 'stall_minutes = "ten"'])
+def test_bad_numbers_are_errors(tmp_path, monkeypatch, capsys, line):
+    with pytest.raises(SystemExit, match="whole number"):
+        new(tmp_path, monkeypatch, capsys, "--dry-run", config=line + "\n")

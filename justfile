@@ -54,9 +54,29 @@ sub-list:
 sub-new *args:
     @uv run --quiet --script {{skill}}/scripts/wb.py new {{args}}
 
-# Merge a run's finished tasks into results.json + report.html
-sub-aggregate run:
-    @uv run --quiet --script {{skill}}/scripts/wb.py aggregate {{run}}
+# Task ids to spawn now, within the run's concurrency
+sub-next run:
+    @uv run --quiet --script {{skill}}/scripts/wb.py next {{run}}
+
+# Archive a task's failed attempt, then requeue it or mark it failed
+sub-retry run task:
+    @uv run --quiet --script {{skill}}/scripts/wb.py retry {{run}} {{task}}
+
+# Record what a player cost (from the Agent completion notification)
+sub-timing run task tokens ms:
+    @uv run --quiet --script {{skill}}/scripts/wb.py timing {{run}} {{task}} --tokens {{tokens}} --ms {{ms}}
+
+# Make an earlier run active again and requeue its unfinished tasks
+sub-resume run:
+    @uv run --quiet --script {{skill}}/scripts/wb.py resume {{run}}
+
+# One line per task state change until the run finishes (what the Monitor tool runs)
+sub-watch run:
+    @uv run --quiet --script {{skill}}/scripts/wb.py watch {{run}}
+
+# Merge one or more runs into results.json + report.html
+sub-aggregate +runs:
+    @uv run --quiet --script {{skill}}/scripts/wb.py aggregate {{runs}}
 
 # Board server for one player. Claude Code starts this for each wbench-player; never run it by hand
 sub-server:

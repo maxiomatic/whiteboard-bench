@@ -131,3 +131,45 @@ def test_task_can_only_be_claimed_once(make_run):
     assert anyio.run(begin_once)["ok"]
     second = anyio.run(begin_once)
     assert not second["ok"] and "already claimed" in second["error"]
+
+
+def status(run, task):
+    return json.loads((run / task / "status.json").read_text())
+
+
+def test_status_lifecycle_ends_done(make_run):
+    run = make_run("dg_org_chart")
+    replay_through_mcp(run, "dg_org_chart")
+    st = status(run, "dg_org_chart")
+    assert st["state"] == "done" and st["calls"] > 0
+
+
+def test_disconnect_mid_task_marks_abandoned(make_run):
+    run = make_run("pl_kanban_updates")
+
+    async def main():
+        async with stdio_client(params(run)) as (r, w), ClientSession(r, w) as s:
+            await s.initialize()
+            assert (await call(s, "begin", {"task_id": "pl_kanban_updates"}))["ok"]
+            await call(s, "get_board", {})
+            assert status(run, "pl_kanban_updates")["state"] == "playing"
+
+    anyio.run(main)
+    assert status(run, "pl_kanban_updates")["state"] == "abandoned"
+    assert not (run / "pl_kanban_updates" / "result.json").exists()
+
+
+def test_retried_task_locks_out_the_stale_player(make_run):
+    import wb
+    run = make_run("dg_org_chart")
+
+    async def main():
+        async with stdio_client(params(run)) as (r, w), ClientSession(r, w) as s:
+            await s.initialize()
+            assert (await call(s, "begin", {"task_id": "dg_org_chart"}))["ok"]
+            wb.retry(run, "dg_org_chart")  # the orchestrator gave up on this player
+            await call(s, "get_board", {})
+            assert not (run / "dg_org_chart").exists(), "stale player recreated the task dir"
+
+    anyio.run(main)
+    assert not (run / "dg_org_chart").exists()
