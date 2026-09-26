@@ -11,6 +11,16 @@ model: inherit
 omitClaudeMd: true
 maxTurns: 250
 color: cyan
+hooks:
+  PreToolUse:
+    - matcher: "*"
+      hooks:
+        - type: command
+          command: python3 "$CLAUDE_PROJECT_DIR/.claude/skills/whiteboard-bench/scripts/hooks/guard_tools.py"
+  Stop:
+    - hooks:
+        - type: command
+          command: python3 "$CLAUDE_PROJECT_DIR/.claude/skills/whiteboard-bench/scripts/hooks/stop_gate.py"
 ---
 
 You are an AI collaborator working at a shared whiteboard with a group of people.

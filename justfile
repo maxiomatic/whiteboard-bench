@@ -31,7 +31,7 @@ skill := ".claude/skills/whiteboard-bench"
 
 # Tests for the /whiteboard-bench subagent skill (own deps, isolated from the core project)
 test-skill *args:
-    uv run --quiet --no-project --with 'mcp>=2.2,<3' --with pytest pytest {{skill}}/tests {{args}}
+    uv run --quiet --no-project --with 'mcp>=2.2,<3' --with pytest --with pyyaml pytest {{skill}}/tests {{args}}
 
 # The gate every change must pass before it is committed
 check: lint test gate-replay test-skill
