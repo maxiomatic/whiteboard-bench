@@ -19,7 +19,9 @@ def make_run(tmp_path):
         run = tmp_path / "run"
         run.mkdir()
         (run / "manifest.json").write_text(json.dumps({
-            "config": {"select": ",".join(task_ids), "model": "test", "judge": judge, "judge_model": "inherit",
-                       "concurrency": 2, "retries": 1, "stall_minutes": 10}, "tasks": list(task_ids), "files": {t: index[t]["file"] for t in task_ids}}))
+            "selector": ",".join(task_ids),
+            "config": {"model": "test", "judge": judge, "judge_model": "inherit",
+                       "concurrency": 2, "retries": 1, "stall_minutes": 10},
+            "tasks": list(task_ids), "files": {t: index[t]["file"] for t in task_ids}}))
         return run
     return _make

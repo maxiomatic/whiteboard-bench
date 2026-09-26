@@ -5,7 +5,7 @@
 """Run bookkeeping for /whiteboard-bench. Standard library only.
 
     wb.py list                           every task, with its number, category and rubric flag
-    wb.py new [selector] [--model M] [--dry-run]
+    wb.py new <selector> [--model M] [--judge llm|human|off] [--dry-run]
                                          resolve the selection, create the run, make it active
     wb.py next <run>                     task ids to spawn now (respects concurrency)
     wb.py retry <run> <task>             archive a failed attempt; requeue it or mark it failed
@@ -21,7 +21,7 @@
 
 Selectors: a task by number, id or file stem (09, bs_divergent_ideas,
 09_bs_divergent_ideas); a comma-separated list of those; a category
-(diagramming); "smoke" (the first task of each category); "all".
+(diagramming); "all". A selector is always required: `list` shows the tasks.
 Defaults come from config.toml next to this skill; flags override them.
 
 Task states, stored in <run>/<task>/status.json:
@@ -62,7 +62,7 @@ from wbench.run import summarize  # noqa: E402
 
 RUNS = ROOT / "runs"
 CONFIG = pathlib.Path(__file__).resolve().parents[1] / "config.toml"
-DEFAULTS = {"select": "smoke", "model": "inherit", "judge": "llm", "judge_model": "inherit",
+DEFAULTS = {"model": "inherit", "judge": "llm", "judge_model": "inherit",
             "concurrency": 6, "retries": 1, "stall_minutes": 10}
 JUDGE_MODES = ("llm", "human", "off")
 ACTIVE = {"spawned", "playing"}
@@ -93,12 +93,6 @@ def resolve(selector: str) -> list[dict]:
     for part in (p.strip() for p in selector.split(",")):
         if part == "all":
             chosen.update(t["id"] for t in index)
-        elif part == "smoke":
-            seen = set()
-            for t in index:
-                if t["category"] not in seen:
-                    seen.add(t["category"])
-                    chosen.add(t["id"])
         elif part in categories:
             chosen.update(t["id"] for t in index if t["category"] == part)
         else:
@@ -106,7 +100,7 @@ def resolve(selector: str) -> list[dict]:
                      or (part.isdigit() and int(part) == int(t["num"]))]
             if not match:
                 raise SystemExit(f"unknown selector '{part}'. Use a task number (09), id (bs_divergent_ideas), "
-                                 f"file stem, a category ({', '.join(categories)}), smoke or all. "
+                                 f"file stem, a category ({', '.join(categories)}) or all. "
                                  "`just sub-list` shows every task.")
             chosen.add(match[0]["id"])
     return [t for t in index if t["id"] in chosen]
@@ -133,8 +127,6 @@ def load_config(path: pathlib.Path | None = None) -> dict:
 def settings(a) -> dict:
     """config.toml, then flags. The result is what the run records and uses."""
     cfg = load_config(pathlib.Path(a.config) if a.config else None)
-    if a.selector:
-        cfg["select"] = a.selector
     if a.model:
         cfg["model"] = a.model
     if a.judge:
@@ -346,9 +338,12 @@ def cmd_list(a):
 
 
 def cmd_new(a):
+    if not a.selector:
+        raise SystemExit("a selector is required: a task (09), a list (04,09,16), a category (diagramming) or all. "
+                         "`just sub-list` shows every task.")
     cfg = settings(a)
-    tasks = resolve(cfg["select"])
-    plan = {"select": cfg["select"], "model": cfg["model"], "judge": cfg["judge"],
+    tasks = resolve(a.selector)
+    plan = {"selector": a.selector, "model": cfg["model"], "judge": cfg["judge"],
             "tasks": [t["id"] for t in tasks], "players": len(tasks),
             "judges": sum(t["rubric"] for t in tasks) if cfg["judge"] == "llm" else 0,
             "concurrency": cfg["concurrency"]}
@@ -357,7 +352,7 @@ def cmd_new(a):
         return
     run = RUNS / f"subagents-{_slug(cfg['model'])}-{time.strftime('%Y%m%d-%H%M%S')}"
     run.mkdir(parents=True)
-    m = {"created": time.strftime("%Y-%m-%dT%H:%M:%S"), "config": cfg,
+    m = {"created": time.strftime("%Y-%m-%dT%H:%M:%S"), "selector": a.selector, "config": cfg,
          "tasks": plan["tasks"], "files": {t["id"]: t["file"] for t in tasks}}
     (run / "manifest.json").write_text(json.dumps(m, indent=2))
     (RUNS / ".active").write_text(str(run))
@@ -554,7 +549,7 @@ def main(argv=None):
     p = sub.add_parser("list", help="show every task")
     p.set_defaults(fn=cmd_list)
     p = sub.add_parser("new", help="create a run")
-    p.add_argument("selector", nargs="?", help="task(s), category, smoke or all (default: config select)")
+    p.add_argument("selector", nargs="?", help="task(s), a category, or all (required)")
     p.add_argument("--model", help="model the players run on (default: config model)")
     p.add_argument("--judge", choices=JUDGE_MODES, help="who grades rubric checks (default: config judge)")
     p.add_argument("--dry-run", action="store_true", help="show what would run, create nothing")

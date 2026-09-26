@@ -50,7 +50,7 @@ build-tasks:
 sub-list:
     @uv run --quiet --script {{skill}}/scripts/wb.py list
 
-# Create a run and make it active: just sub-new [selector] [--model M] [--judge llm|human|off] [--dry-run]
+# Create a run and make it active: just sub-new <selector> [--model M] [--judge llm|human|off] [--dry-run]
 sub-new *args:
     @uv run --quiet --script {{skill}}/scripts/wb.py new {{args}}
 

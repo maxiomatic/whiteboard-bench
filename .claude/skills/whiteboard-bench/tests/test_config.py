@@ -26,18 +26,11 @@ def test_category_mixed_with_task():
     assert ids("diagramming,09")[-1] == "bs_divergent_ideas"
 
 
-def test_smoke_is_one_task_per_category():
-    index = {t["id"]: t for t in wb.task_index()}
-    got = ids("smoke")
-    cats = [index[t]["category"] for t in got]
-    assert len(got) == 6 and len(set(cats)) == 6
-
-
 def test_all():
     assert len(ids("all")) == 22
 
 
-@pytest.mark.parametrize("bad", ["99", "nope", "diagram", "08,nope"])
+@pytest.mark.parametrize("bad", ["99", "nope", "diagram", "08,nope", "smoke"])
 def test_unknown_selector_is_an_error(bad):
     with pytest.raises(SystemExit, match="unknown selector"):
         wb.resolve(bad)
@@ -62,44 +55,56 @@ def new(tmp_path, monkeypatch, capsys, *args, config=None):
 
 
 def test_config_supplies_defaults(tmp_path, monkeypatch, capsys):
-    out = new(tmp_path, monkeypatch, capsys, "--dry-run", config='select = "09"\nmodel = "haiku"\n')
+    out = new(tmp_path, monkeypatch, capsys, "09", "--dry-run", config='model = "haiku"\n')
     assert out["tasks"] == ["bs_divergent_ideas"] and out["model"] == "haiku"
 
 
+def test_selector_is_required(tmp_path, monkeypatch, capsys):
+    for args in (["--dry-run"], []):
+        with pytest.raises(SystemExit, match="selector is required"):
+            new(tmp_path, monkeypatch, capsys, *args)
+    assert not (tmp_path / "runs").exists()
+
+
+def test_old_select_key_is_rejected(tmp_path, monkeypatch, capsys):
+    with pytest.raises(SystemExit, match="unknown key"):
+        new(tmp_path, monkeypatch, capsys, "09", "--dry-run", config='select = "all"\n')
+
+
 def test_flags_override_config(tmp_path, monkeypatch, capsys):
-    out = new(tmp_path, monkeypatch, capsys, "08", "--model", "sonnet", "--dry-run",
-              config='select = "09"\nmodel = "haiku"\n')
+    out = new(tmp_path, monkeypatch, capsys, "08", "--model", "sonnet", "--dry-run", config='model = "haiku"\n')
     assert out["tasks"] == ["dg_org_chart"] and out["model"] == "sonnet"
 
 
 def test_dry_run_creates_nothing(tmp_path, monkeypatch, capsys):
-    new(tmp_path, monkeypatch, capsys, "smoke", "--dry-run")
+    new(tmp_path, monkeypatch, capsys, "all", "--dry-run")
     assert not (tmp_path / "runs").exists()
 
 
 def test_new_records_resolved_config(tmp_path, monkeypatch, capsys):
-    out = new(tmp_path, monkeypatch, capsys, "diagramming", "--model", "haiku", config='select = "09"\n')
+    out = new(tmp_path, monkeypatch, capsys, "diagramming", "--model", "haiku", config='model = "sonnet"\n')
     manifest = json.loads((tmp_path / "runs" / out["run"].split("/")[-1] / "manifest.json").read_text())
-    assert manifest["config"] == {**wb.DEFAULTS, "select": "diagramming", "model": "haiku"}
+    assert manifest["selector"] == "diagramming"
+    assert manifest["config"] == {**wb.DEFAULTS, "model": "haiku"}
     assert manifest["tasks"] == out["tasks"] and len(out["tasks"]) == 5
     assert (tmp_path / "runs" / ".active").read_text() == out["run"]
 
 
 def test_unknown_config_key_is_an_error(tmp_path, monkeypatch, capsys):
     with pytest.raises(SystemExit, match="unknown key"):
-        new(tmp_path, monkeypatch, capsys, "--dry-run", config='modle = "haiku"\n')
+        new(tmp_path, monkeypatch, capsys, "09", "--dry-run", config='modle = "haiku"\n')
 
 
 def test_shipped_config_is_valid():
     cfg = wb.load_config()
     assert set(cfg) == set(wb.DEFAULTS)
-    wb.resolve(cfg["select"])
+    assert "select" not in cfg
 
 
 @pytest.mark.parametrize("line", ["concurrency = 0", "retries = -1", 'stall_minutes = "ten"'])
 def test_bad_numbers_are_errors(tmp_path, monkeypatch, capsys, line):
     with pytest.raises(SystemExit, match="whole number"):
-        new(tmp_path, monkeypatch, capsys, "--dry-run", config=line + "\n")
+        new(tmp_path, monkeypatch, capsys, "09", "--dry-run", config=line + "\n")
 
 
 @pytest.mark.parametrize("mode", ["llm", "human", "off"])
@@ -115,4 +120,4 @@ def test_judge_mode_from_config(tmp_path, monkeypatch, capsys):
 
 def test_bad_judge_mode_is_an_error(tmp_path, monkeypatch, capsys):
     with pytest.raises(SystemExit, match="judge"):
-        new(tmp_path, monkeypatch, capsys, "--dry-run", config='judge = "robot"\n')
+        new(tmp_path, monkeypatch, capsys, "09", "--dry-run", config='judge = "robot"\n')

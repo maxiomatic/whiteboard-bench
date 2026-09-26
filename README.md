@@ -28,13 +28,12 @@ In Claude Code, from the repo root:
 /whiteboard-bench 08 --model haiku            # choose the player's model
 /whiteboard-bench 04,09,16                    # a few tasks
 /whiteboard-bench diagramming --model sonnet  # a category
-/whiteboard-bench smoke                       # the first task of each category (6)
 /whiteboard-bench all                         # all 22
 /whiteboard-bench all --dry-run               # show what would run, spawn nothing
 /whiteboard-bench 10 --judge human            # you score the rubric check afterwards
 ```
 
-`just sub-list` shows every task with its number, category, turn count and whether it has a rubric check. Defaults live in `.claude/skills/whiteboard-bench/config.toml`: what runs with no selector, the model, how many players run at once (`concurrency`), how often a failed task is retried (`retries`) and when a silent player counts as stalled (`stall_minutes`). Each run records the settings it used in its `manifest.json`.
+`just sub-list` shows every task with its number, category, turn count and whether it has a rubric check. A selector is always required, so nothing runs by accident. Defaults live in `.claude/skills/whiteboard-bench/config.toml`: the model, how many players run at once (`concurrency`), how often a failed task is retried (`retries`) and when a silent player counts as stalled (`stall_minutes`). Each run records the settings it used in its `manifest.json`.
 
 Players run in parallel up to `concurrency`. The orchestrator follows a Monitor feed (`just sub-watch <run>`) instead of polling. A player that disconnects, errors or stalls is retried, and its files are archived first, so a stale player can't write into the new attempt. Token use per task comes from each player's completion notice and is summed in the report. `/whiteboard-bench resume <run>` requeues whatever didn't finish, and `just sub-aggregate <run> <run> ...` merges separate runs (say, one category at a time) into one report.
 

@@ -1,7 +1,7 @@
 ---
 name: whiteboard-bench
 description: Run the WhiteboardBench eval with Claude Code subagents instead of the API. One wbench-player subagent plays each task against its own board server; results are graded by the benchmark's harness and merged into an HTML report.
-argument-hint: "[selector] [--model M] [--judge llm|human|off] [--dry-run] | resume <run>"
+argument-hint: "<selector> [--model M] [--judge llm|human|off] [--dry-run] | resume <run>"
 disable-model-invocation: true
 allowed-tools: Bash(just sub-*) Agent Monitor TaskStop
 ---
@@ -14,7 +14,7 @@ Arguments: `$ARGUMENTS`
 
 | Argument | Meaning | Default |
 |---|---|---|
-| selector | a task (`09`, `bs_divergent_ideas`), a list (`04,09,16`), a category (`diagramming`), `smoke` (first task of each category) or `all` | `select` in `config.toml` (`smoke`) |
+| selector | a task (`09`, `bs_divergent_ideas`), a list (`04,09,16`), a category (`diagramming`) or `all` | required |
 | `--model M` | the model the players run on (`haiku`, `sonnet`, `opus`, or a full model id) | `model` in `config.toml` (`inherit`, meaning this session's model) |
 | `--judge llm\|human\|off` | who grades the rubric checks (see below) | `judge` in `config.toml` (`llm`) |
 | `--dry-run` | show what would run and how many players and judges it would spawn, then stop | off |
@@ -24,7 +24,7 @@ Defaults, including `judge_model`, `concurrency`, `retries` and `stall_minutes`,
 
 ## Steps
 
-1. **Create the run.** Run `just sub-new <arguments as given>`, or `just sub-resume <run>` for `resume`. It prints the run path, the model, the judge mode and the task list. Tell the user in one line what will run: the task count, the model, the judge mode and the concurrency. With `--dry-run`, stop here.
+1. **Create the run.** If no selector was given, run `just sub-list`, show the user the tasks, ask what to run and stop there: never guess a selection, since every task costs tokens. Otherwise run `just sub-new <arguments as given>`, or `just sub-resume <run>` for `resume`. It prints the run path, the model, the judge mode and the task list. Tell the user in one line what will run: the task count, the model, the judge mode and the concurrency. With `--dry-run`, stop here.
 
 2. **Watch it.** Start the Monitor tool on `just sub-watch <run>` with the longest timeout it allows. Each line is an event (see step 4). If the watch hits its deadline before `all done`, start it again; its first line is a status summary, not new events.
 
