@@ -2,17 +2,63 @@
 
 WhiteboardBench measures how well an AI agent works at a shared whiteboard with people. The agent gets a spoken or typed request, reads the board, and changes it through a tool API: sticky notes, shapes, frames, connectors, freehand strokes, layout helpers, comments, undo and speech. Scripted human collaborators keep editing the board, voting, pointing and talking between turns and sometimes in the middle of one. Deterministic checks grade the result, and an optional LLM judge scores the few things that need taste.
 
-The whole project is Python standard library only. No install step is needed.
+The benchmark itself is Python standard library only. Commands run through [just](https://just.systems) and [uv](https://docs.astral.sh/uv/), which also installs the dev tools (pytest, ruff). Install just with `uv tool install rust-just`, then:
 
 ```bash
-python -m wbench.run --agent replay        # reference solutions, should score 1.0
-python -m wbench.run --agent null          # does nothing, sets the floor
+just setup                                 # create .venv with the dev tools
+just run replay                            # reference solutions, should score 1.0
+just run null                              # does nothing, sets the floor
 export ANTHROPIC_API_KEY=...
-python -m wbench.run --agent anthropic --model claude-sonnet-5 --judge
-python -m unittest discover -s tests -v
+just run anthropic --model claude-sonnet-5 --judge
+just check                                 # lint, tests, and the replay-scores-1.0 gate
 ```
 
+Run `just` to list every command.
+
 Each run writes `runs/<agent>-<timestamp>/results.json` and a self-contained `report.html` with per-check scores and an SVG snapshot of the board after every turn. To see what a report looks like without running anything, open [`docs/sample-report.html`](docs/sample-report.html), a run of the replay agent.
+
+## Run with Claude Code subagents (no API key)
+
+The `/whiteboard-bench` skill in `.claude/skills/whiteboard-bench/` runs tasks with Claude Code subagents instead of the API. Each task gets one `wbench-player` subagent (`.claude/agents/wbench-player.md`). The player talks to its own board server over MCP, sees only the whiteboard tools, and gets the same instructions an API run gets. The unmodified harness grades the result, and scores never reach the player.
+
+In Claude Code, from the repo root:
+
+```
+/whiteboard-bench 08                          # one task, player on this session's model
+/whiteboard-bench 08 --model haiku            # choose the player's model
+/whiteboard-bench 04,09,16                    # a few tasks
+/whiteboard-bench diagramming --model sonnet  # a category
+/whiteboard-bench all                         # all 22
+/whiteboard-bench all --dry-run               # show what would run, spawn nothing
+/whiteboard-bench 10 --judge human            # you score the rubric check afterwards
+```
+
+`just sub-list` shows every task with its number, category, turn count and whether it has a rubric check. A selector is always required, so nothing runs by accident. Defaults live in `.claude/skills/whiteboard-bench/config.toml`: the model, how many players run at once (`concurrency`), how often a failed task is retried (`retries`) and when a silent player counts as stalled (`stall_minutes`). Each run records the settings it used in its `manifest.json`.
+
+Players run in parallel up to `concurrency`. The orchestrator follows a Monitor feed (`just sub-watch <run>`) instead of polling. A player that disconnects, errors or stalls is retried, and its files are archived first, so a stale player can't write into the new attempt. Token use per task comes from each player's completion notice and is summed in the report. `/whiteboard-bench resume <run>` requeues whatever didn't finish, and `just sub-aggregate <run> <run> ...` merges separate runs (say, one category at a time) into one report.
+
+### How the judge affects scores
+
+Only 6 of the 22 tasks have a `rubric` check, a taste question that code can't grade:
+
+| # | Task | Rubric question |
+|---|---|---|
+| 09 | Divergent ideas | Are the ideas varied, specific enough to act on, and plausible for a public library? |
+| 10 | Affinity map | Do the theme titles name the underlying user need clearly? |
+| 11 | "Yes, and" | Does each new sticky genuinely extend the idea it's connected to? |
+| 13 | Sprint retro | Are the action items concrete, owned or time-bound, and aimed at the problems? |
+| 18 | Conflicting requests | Did the AI present both proposals fairly and hand the decision back to the group? |
+| 22 | Focus layers | Does the focus note frame the pricing decision and name the options? |
+
+For subagent runs, `judge` in `config.toml`, or `--judge` per run, decides who answers them:
+
+- `llm` (default): a `wbench-judge` subagent per rubric task, with the same prompt as the API judge. At most 6 small subagents per full run.
+- `human`: nobody during the run. Afterwards, `just sub-judge <run>` opens a review page per item (the requests, the final board, what the AI said, the question) and asks you for a score from 0 to 10 and a one-line reason. It costs no tokens, and you can stop and pick up later.
+- `off`: rubric checks are left out of the score, not scored zero.
+
+Turning the judge off changes scores, not just cost. Take task 09, where the rubric carries weight 3 of 9. If the agent writes 15 distinct but generic ideas that a judge would rate 4/10, the task scores 0.80 with a judge and 1.00 without one. So compare scores only across runs that used the same mode. The report's title states it. A task still awaiting a score is left out of the overall score until it has one. `just sub-judge <run> --rejudge` lets you score items an LLM judge already scored: both scores are kept and shown side by side, and the human score counts.
+
+Two hooks in the player's definition enforce the rules at runtime. `guard_tools.py` denies any tool that isn't a board tool, and `stop_gate.py` stops the player from quitting before the session is over (it blocks once, then lets a stuck player go). Each run writes `runs/subagents-<model>-<timestamp>/` with a `result.json` per task, plus `results.json` and `report.html` in the same format as API runs. Claude Code only starts the player's board server and hooks after you trust the repo folder. Subagent runs use Claude Code's agent loop, so compare them with other subagent runs rather than with API runs.
 
 ## What it tests
 
@@ -144,8 +190,8 @@ The test suite also runs a "vandal" agent that solves each task and then deletes
 `scripts/build_tasks.py` is the source of truth. Add a `task(...)` call there with its turns, checks, events, participants, initial elements and a reference solution, then run:
 
 ```bash
-python scripts/build_tasks.py
-python -m unittest discover -s tests
+just build-tasks
+just check
 ```
 
 The tests fail if the reference solution scores below 1.0, which catches both broken checks and impossible tasks. Reference solution steps are ordinary tool calls. Arguments can refer to earlier results with `"$name"`, look things up with `{"$find": selector}` or `{"$find_all": selector}`, and resolve a point with `{"$at": [x, y]}`.
@@ -187,6 +233,11 @@ wbench/
 scripts/build_tasks.py
 tasks/*.json
 tests/test_smoke.py
+justfile          every command
+.claude/skills/whiteboard-bench/   /whiteboard-bench: run with Claude Code subagents
+.claude/agents/wbench-player.md    the subagent under test
+.claude/agents/wbench-judge.md     the rubric grader (judge = "llm")
+pyproject.toml    uv project and dev tools
 ```
 
 ## Limitations and next steps

@@ -1,0 +1,35 @@
+[project]
+name = "whiteboard-bench"
+version = "0.1.0"
+description = "Benchmark for AI agents collaborating with people at a shared whiteboard"
+readme = "README.md"
+license = "GPL-3.0-only"
+requires-python = ">=3.11"
+dependencies = []
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.6"]
+
+[tool.uv]
+package = false
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+# Pyflakes and syntax errors only: catch real bugs without restyling the benchmark code.
+select = ["F", "E9"]
+per-file-ignores = { "__init__.py" = ["F401"] }
+
+[tool.coverage.run]
+# the board server and the hooks run as subprocesses in the skill tests
+patch = ["subprocess"]
+source = [".claude/skills/whiteboard-bench/scripts"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
