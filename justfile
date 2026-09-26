@@ -33,6 +33,14 @@ skill := ".claude/skills/whiteboard-bench"
 test-skill *args:
     uv run --quiet --no-project --with 'mcp>=2.2,<3' --with pytest --with pyyaml pytest {{skill}}/tests {{args}}
 
+# Line coverage of the skill's scripts, including the board server and hooks run as subprocesses
+coverage-skill:
+    rm -f .coverage .coverage.*
+    uv run --quiet --no-project --with 'mcp>=2.2,<3' --with pytest --with pyyaml --with 'coverage>=7.10' \
+        coverage run -m pytest -q {{skill}}/tests
+    uv run --quiet --no-project --with 'coverage>=7.10' coverage combine -q
+    uv run --quiet --no-project --with 'coverage>=7.10' coverage report
+
 # The gate every change must pass before it is committed
 check: lint test gate-replay test-skill
 

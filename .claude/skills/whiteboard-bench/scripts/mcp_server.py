@@ -161,6 +161,7 @@ class Session:
         self.thread.start()
         kind, first = self.agent.outbox.get()
         if kind == "error":
+            self.complete = True  # the session never started: keep the "error" status, don't mark it abandoned
             return {"ok": False, "error": first}
         b = briefing(self.task)
         return {"ok": True, "task": self.task["title"], "instructions": system_prompt(b), "message": first}
