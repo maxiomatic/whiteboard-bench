@@ -118,9 +118,9 @@ def load_config(path: pathlib.Path | None = None) -> dict:
         raise SystemExit(f"unknown key(s) in {path}: {', '.join(sorted(unknown))}")
     if cfg["judge"] not in JUDGE_MODES:
         raise SystemExit(f"judge in {path} must be one of {', '.join(JUDGE_MODES)} (got {cfg['judge']!r})")
-    for key in ("concurrency", "retries", "stall_minutes"):
-        if not isinstance(cfg[key], int) or cfg[key] < (1 if key != "retries" else 0):
-            raise SystemExit(f"{key} in {path} must be a whole number (got {cfg[key]!r})")
+    for key, least in (("concurrency", 1), ("retries", 0), ("stall_minutes", 1)):
+        if not isinstance(cfg[key], int) or cfg[key] < least:
+            raise SystemExit(f"{key} in {path} must be a whole number of at least {least} (got {cfg[key]!r})")
     return cfg
 
 

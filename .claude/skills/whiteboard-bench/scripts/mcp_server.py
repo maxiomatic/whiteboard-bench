@@ -191,9 +191,9 @@ class Session:
             return {"ok": False, "error": "call begin with your task id first"}
         if self.complete:
             return {"ok": False, "error": "the session is over; reply with one line and stop"}
+        self.calls += 1  # counted when sent, so the final "done" status includes the call that ended the session
         self.agent.inbox.put((name, args))
         kind, payload = self.agent.outbox.get()
-        self.calls += 1
         if kind == "result":
             self._status("playing")
             return payload

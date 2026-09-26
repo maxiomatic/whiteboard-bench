@@ -140,9 +140,10 @@ def status(run, task):
 
 def test_status_lifecycle_ends_done(make_run):
     run = make_run("dg_org_chart")
-    replay_through_mcp(run, "dg_org_chart")
+    _, result, _ = replay_through_mcp(run, "dg_org_chart")
     st = status(run, "dg_org_chart")
-    assert st["state"] == "done" and st["calls"] > 0
+    assert st["state"] == "done"
+    assert st["calls"] == result["stats"]["tool_calls"]
 
 
 def test_disconnect_mid_task_marks_abandoned(make_run):
