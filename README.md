@@ -2,15 +2,18 @@
 
 WhiteboardBench measures how well an AI agent works at a shared whiteboard with people. The agent gets a spoken or typed request, reads the board, and changes it through a tool API: sticky notes, shapes, frames, connectors, freehand strokes, layout helpers, comments, undo and speech. Scripted human collaborators keep editing the board, voting, pointing and talking between turns and sometimes in the middle of one. Deterministic checks grade the result, and an optional LLM judge scores the few things that need taste.
 
-The whole project is Python standard library only. No install step is needed.
+The benchmark itself is Python standard library only. Commands run through [just](https://just.systems) and [uv](https://docs.astral.sh/uv/), which also installs the dev tools (pytest, ruff). Install just with `uv tool install rust-just`, then:
 
 ```bash
-python -m wbench.run --agent replay        # reference solutions, should score 1.0
-python -m wbench.run --agent null          # does nothing, sets the floor
+just setup                                 # create .venv with the dev tools
+just run replay                            # reference solutions, should score 1.0
+just run null                              # does nothing, sets the floor
 export ANTHROPIC_API_KEY=...
-python -m wbench.run --agent anthropic --model claude-sonnet-5 --judge
-python -m unittest discover -s tests -v
+just run anthropic --model claude-sonnet-5 --judge
+just check                                 # lint, tests, and the replay-scores-1.0 gate
 ```
+
+Run `just` to list every command.
 
 Each run writes `runs/<agent>-<timestamp>/results.json` and a self-contained `report.html` with per-check scores and an SVG snapshot of the board after every turn. To see what a report looks like without running anything, open [`docs/sample-report.html`](docs/sample-report.html), a run of the replay agent.
 
@@ -144,8 +147,8 @@ The test suite also runs a "vandal" agent that solves each task and then deletes
 `scripts/build_tasks.py` is the source of truth. Add a `task(...)` call there with its turns, checks, events, participants, initial elements and a reference solution, then run:
 
 ```bash
-python scripts/build_tasks.py
-python -m unittest discover -s tests
+just build-tasks
+just check
 ```
 
 The tests fail if the reference solution scores below 1.0, which catches both broken checks and impossible tasks. Reference solution steps are ordinary tool calls. Arguments can refer to earlier results with `"$name"`, look things up with `{"$find": selector}` or `{"$find_all": selector}`, and resolve a point with `{"$at": [x, y]}`.
@@ -187,6 +190,8 @@ wbench/
 scripts/build_tasks.py
 tasks/*.json
 tests/test_smoke.py
+justfile          every command
+pyproject.toml    uv project and dev tools
 ```
 
 ## Limitations and next steps
