@@ -1,0 +1,285 @@
+{
+  "id": "co_protected_region",
+  "category": "collaboration",
+  "title": "Tidy one area while a colleague presents from another",
+  "difficulty": "medium",
+  "skills": [
+    "scoped edits",
+    "concurrent editing",
+    "tidying"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green"
+    },
+    "priya": {
+      "name": "Priya",
+      "color": "purple"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Maya's section",
+      "x": 100,
+      "y": 100,
+      "w": 800,
+      "h": 600,
+      "author": "human:maya"
+    },
+    {
+      "type": "frame",
+      "text": "Parking lot",
+      "x": 1000,
+      "y": 100,
+      "w": 900,
+      "h": 800,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Persona: busy parent",
+      "x": 150,
+      "y": 200,
+      "author": "human:maya",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Journey: signup",
+      "x": 350,
+      "y": 200,
+      "author": "human:maya",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Journey: first order",
+      "x": 550,
+      "y": 200,
+      "author": "human:maya",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Pain: slow checkout",
+      "x": 150,
+      "y": 400,
+      "author": "human:maya",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Pain: unclear pricing",
+      "x": 350,
+      "y": 400,
+      "author": "human:maya",
+      "color": "pink"
+    },
+    {
+      "type": "sticky",
+      "text": "Budget approval?",
+      "x": 1050,
+      "y": 200,
+      "author": "human:sam",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Localization later",
+      "x": 1120,
+      "y": 240,
+      "author": "human:lee",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Revisit dark patterns",
+      "x": 1300,
+      "y": 180,
+      "author": "human:priya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Who owns analytics?",
+      "x": 1330,
+      "y": 260,
+      "author": "human:sam",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Legal: data retention",
+      "x": 1500,
+      "y": 400,
+      "author": "human:lee",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Partner API access",
+      "x": 1080,
+      "y": 500,
+      "author": "human:priya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Holiday code freeze",
+      "x": 1150,
+      "y": 540,
+      "author": "human:facilitator",
+      "color": "yellow"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Please tidy up the Parking lot into a neat grid with no overlaps. Maya is still presenting from her section, so don't move or change anything in it.",
+      "events": [
+        {
+          "op": "create",
+          "actor": "human:sam",
+          "at_call": 3,
+          "into_frame": "Parking lot",
+          "placement": "center",
+          "element": {
+            "type": "sticky",
+            "text": "Hire a contractor?"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "check": "preserve_human",
+          "weight": 3,
+          "label": "Maya's section untouched",
+          "selector": {
+            "frame": "Maya's section"
+          },
+          "positions": true,
+          "tol": 2
+        },
+        {
+          "check": "no_overlap",
+          "weight": 2,
+          "label": "parking lot has no overlaps",
+          "selector": {
+            "frame": "Parking lot"
+          }
+        },
+        {
+          "check": "grid_aligned",
+          "weight": 1,
+          "label": "parking lot is a grid",
+          "selector": {
+            "frame": "Parking lot"
+          }
+        },
+        {
+          "check": "in_frame",
+          "weight": 2,
+          "label": "all parking-lot items (incl. Sam's new one) stay in it",
+          "guard": true,
+          "items": [
+            {
+              "text": "Budget approval?",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Localization later",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Revisit dark patterns",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Who owns analytics?",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Legal: data retention",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Partner API access",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Holiday code freeze",
+              "frame": "Parking lot"
+            },
+            {
+              "text": "Hire a contractor",
+              "frame": "Parking lot"
+            }
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 1,
+          "label": "nobody's text changed"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 6,
+  "reference_solution": [
+    [
+      {
+        "tool": "arrange",
+        "args": {
+          "ids": {
+            "$find_all": {
+              "frame": "Parking lot",
+              "type": "sticky"
+            }
+          },
+          "layout": "grid",
+          "x": 1040,
+          "y": 170,
+          "columns": 4,
+          "gap": 30
+        }
+      },
+      {
+        "tool": "arrange",
+        "args": {
+          "ids": {
+            "$find_all": {
+              "frame": "Parking lot",
+              "type": "sticky"
+            }
+          },
+          "layout": "grid",
+          "x": 1040,
+          "y": 170,
+          "columns": 4,
+          "gap": 30
+        }
+      }
+    ]
+  ]
+}

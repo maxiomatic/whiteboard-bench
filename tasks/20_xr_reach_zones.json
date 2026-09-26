@@ -1,0 +1,335 @@
+{
+  "id": "xr_reach_zones",
+  "category": "xr_spatial",
+  "title": "Hand out items within each person's reach",
+  "difficulty": "medium",
+  "skills": [
+    "embodied ergonomics",
+    "ownership",
+    "spatial constraints"
+  ],
+  "setting": "A mixed-reality room. The board is a wall-sized virtual canvas that everyone sees in their headset. People talk and point; pointing and gaze arrive as board coordinates. Layers: 0 is the board surface, 1 is the focus layer floating in front of the wall, -1 is the background layer behind it.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink",
+      "reach": {
+        "x": 0,
+        "y": 300,
+        "w": 1300,
+        "h": 1200
+      },
+      "note": "Standing at the left of the wall."
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue",
+      "reach": {
+        "x": 1300,
+        "y": 300,
+        "w": 1300,
+        "h": 1200
+      },
+      "note": "Standing at the center of the wall."
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green",
+      "reach": {
+        "x": 2600,
+        "y": 300,
+        "w": 1300,
+        "h": 1200
+      },
+      "note": "Standing at the right of the wall."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Action items",
+      "x": 1300,
+      "y": 1750,
+      "w": 1300,
+      "h": 500,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Maya: book the venue",
+      "x": 1350,
+      "y": 1850,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Sam: send invites",
+      "x": 1555,
+      "y": 1850,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Lee: order catering",
+      "x": 1760,
+      "y": 1850,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Maya: draft the agenda",
+      "x": 1965,
+      "y": 1850,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Sam: arrange AV equipment",
+      "x": 2170,
+      "y": 1850,
+      "author": "human:facilitator",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Lee: collect dietary needs",
+      "x": 2375,
+      "y": 1850,
+      "author": "human:facilitator",
+      "color": "yellow"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Everyone's at the wall now. Hand each person their own action items: move each item to within that person's arm's reach, and color each person's items with their participant color.",
+      "events": [],
+      "checks": [
+        {
+          "check": "in_region",
+          "weight": 4,
+          "label": "items within owner's reach",
+          "items": [
+            {
+              "text": "Maya: book the venue",
+              "participant": "maya"
+            },
+            {
+              "text": "Sam: send invites",
+              "participant": "sam"
+            },
+            {
+              "text": "Lee: order catering",
+              "participant": "lee"
+            },
+            {
+              "text": "Maya: draft the agenda",
+              "participant": "maya"
+            },
+            {
+              "text": "Sam: arrange AV equipment",
+              "participant": "sam"
+            },
+            {
+              "text": "Lee: collect dietary needs",
+              "participant": "lee"
+            }
+          ]
+        },
+        {
+          "check": "property",
+          "weight": 2,
+          "label": "items colored by owner",
+          "items": [
+            {
+              "text": "Maya: book the venue",
+              "field": "color",
+              "value": "pink"
+            },
+            {
+              "text": "Sam: send invites",
+              "field": "color",
+              "value": "blue"
+            },
+            {
+              "text": "Lee: order catering",
+              "field": "color",
+              "value": "green"
+            },
+            {
+              "text": "Maya: draft the agenda",
+              "field": "color",
+              "value": "pink"
+            },
+            {
+              "text": "Sam: arrange AV equipment",
+              "field": "color",
+              "value": "blue"
+            },
+            {
+              "text": "Lee: collect dietary needs",
+              "field": "color",
+              "value": "green"
+            }
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 1,
+          "label": "item text unchanged"
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 16,
+  "reference_solution": [
+    [
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Maya: book the venue"
+                }
+              },
+              "x": 400,
+              "y": 700
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Sam: send invites"
+                }
+              },
+              "x": 1700,
+              "y": 700
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Lee: order catering"
+                }
+              },
+              "x": 3000,
+              "y": 700
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Maya: draft the agenda"
+                }
+              },
+              "x": 600,
+              "y": 700
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Sam: arrange AV equipment"
+                }
+              },
+              "x": 1900,
+              "y": 700
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Lee: collect dietary needs"
+                }
+              },
+              "x": 3200,
+              "y": 700
+            }
+          ]
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Maya: book the venue"
+            }
+          },
+          "color": "pink"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Sam: send invites"
+            }
+          },
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Lee: order catering"
+            }
+          },
+          "color": "green"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Maya: draft the agenda"
+            }
+          },
+          "color": "pink"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Sam: arrange AV equipment"
+            }
+          },
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": {
+            "$find": {
+              "query": "Lee: collect dietary needs"
+            }
+          },
+          "color": "green"
+        }
+      }
+    ]
+  ]
+}

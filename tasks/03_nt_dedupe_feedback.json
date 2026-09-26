@@ -1,0 +1,318 @@
+{
+  "id": "nt_dedupe_feedback",
+  "category": "note_taking",
+  "title": "Consolidate duplicate feedback stickies",
+  "difficulty": "medium",
+  "skills": [
+    "deduplication",
+    "attribution",
+    "layout"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "sticky",
+      "text": "Onboarding is too long",
+      "x": 120,
+      "y": 140,
+      "author": "human:maya",
+      "color": "yellow",
+      "id": "f1"
+    },
+    {
+      "type": "sticky",
+      "text": "onboarding takes forever",
+      "x": 520,
+      "y": 700,
+      "author": "human:sam",
+      "color": "yellow",
+      "id": "f2"
+    },
+    {
+      "type": "sticky",
+      "text": "Too many steps in onboarding",
+      "x": 1040,
+      "y": 360,
+      "author": "human:lee",
+      "color": "yellow",
+      "id": "f3"
+    },
+    {
+      "type": "sticky",
+      "text": "Search is slow",
+      "x": 330,
+      "y": 420,
+      "author": "human:maya",
+      "color": "yellow",
+      "id": "f4"
+    },
+    {
+      "type": "sticky",
+      "text": "search results take ages to load",
+      "x": 1300,
+      "y": 820,
+      "author": "human:sam",
+      "color": "yellow",
+      "id": "f5"
+    },
+    {
+      "type": "sticky",
+      "text": "Love the dark mode",
+      "x": 760,
+      "y": 120,
+      "author": "human:lee",
+      "color": "yellow",
+      "id": "f6"
+    },
+    {
+      "type": "sticky",
+      "text": "dark mode is great!",
+      "x": 90,
+      "y": 780,
+      "author": "human:maya",
+      "color": "yellow",
+      "id": "f7"
+    },
+    {
+      "type": "sticky",
+      "text": "Export to CSV please",
+      "x": 1250,
+      "y": 150,
+      "author": "human:sam",
+      "color": "yellow",
+      "id": "f8"
+    },
+    {
+      "type": "sticky",
+      "text": "Notifications are noisy",
+      "x": 600,
+      "y": 420,
+      "author": "human:lee",
+      "color": "yellow",
+      "id": "f9"
+    },
+    {
+      "type": "sticky",
+      "text": "too many notifications",
+      "x": 900,
+      "y": 640,
+      "author": "human:sam",
+      "color": "yellow",
+      "id": "f10"
+    },
+    {
+      "type": "sticky",
+      "text": "Pricing page is confusing",
+      "x": 1500,
+      "y": 460,
+      "author": "human:maya",
+      "color": "yellow",
+      "id": "f11"
+    },
+    {
+      "type": "sticky",
+      "text": "Can't find the settings",
+      "x": 330,
+      "y": 980,
+      "author": "human:lee",
+      "color": "yellow",
+      "id": "f12"
+    },
+    {
+      "type": "sticky",
+      "text": "Mobile app crashes on upload",
+      "x": 1120,
+      "y": 1020,
+      "author": "human:sam",
+      "color": "yellow",
+      "id": "f13"
+    },
+    {
+      "type": "sticky",
+      "text": "app crashed when uploading a photo",
+      "x": 700,
+      "y": 960,
+      "author": "human:maya",
+      "color": "yellow",
+      "id": "f14"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "This board is full of duplicate feedback from Maya, Sam and Lee. Merge the duplicates so each distinct piece of feedback appears on exactly one sticky, note who raised it in parentheses, e.g. '(Maya, Sam)', and arrange the result in a tidy grid. Don't lose any distinct feedback.",
+      "events": [],
+      "checks": [
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "no distinct feedback lost",
+          "items": [
+            "onboarding",
+            "search",
+            "dark mode",
+            "export CSV",
+            "notification",
+            "pricing page",
+            "settings",
+            "crash"
+          ]
+        },
+        {
+          "check": "count",
+          "weight": 3,
+          "label": "exactly one sticky per distinct item",
+          "selector": {
+            "type": "sticky"
+          },
+          "min": 8,
+          "max": 8,
+          "strict": true
+        },
+        {
+          "check": "texts_present",
+          "weight": 2,
+          "label": "who raised it is recorded",
+          "items": [
+            "onboarding maya sam lee",
+            "search maya sam",
+            "dark mode lee maya",
+            "notification lee sam",
+            "crash sam maya"
+          ]
+        },
+        {
+          "check": "grid_aligned",
+          "weight": 1,
+          "label": "tidy grid",
+          "selector": {
+            "type": "sticky"
+          }
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 22,
+  "reference_solution": [
+    [
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f1",
+          "text": "Onboarding is too long (Maya, Sam, Lee)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f4",
+          "text": "Search is slow to load results (Maya, Sam)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f6",
+          "text": "Love the dark mode (Lee, Maya)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f8",
+          "text": "Export to CSV please (Sam)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f9",
+          "text": "Notifications are noisy / too many (Lee, Sam)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f11",
+          "text": "Pricing page is confusing (Maya)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f12",
+          "text": "Can't find the settings (Lee)"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "f13",
+          "text": "Mobile app crashes on photo upload (Sam, Maya)"
+        }
+      },
+      {
+        "tool": "delete_elements",
+        "args": {
+          "ids": [
+            "f2",
+            "f3",
+            "f5",
+            "f7",
+            "f10",
+            "f14"
+          ]
+        }
+      },
+      {
+        "tool": "arrange",
+        "args": {
+          "ids": [
+            "f1",
+            "f4",
+            "f6",
+            "f8",
+            "f9",
+            "f11",
+            "f12",
+            "f13"
+          ],
+          "layout": "grid",
+          "x": 100,
+          "y": 100,
+          "columns": 4,
+          "gap": 30
+        }
+      }
+    ]
+  ]
+}

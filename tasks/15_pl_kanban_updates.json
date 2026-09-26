@@ -1,0 +1,349 @@
+{
+  "id": "pl_kanban_updates",
+  "category": "planning",
+  "title": "Kanban board kept in sync with status updates",
+  "difficulty": "medium",
+  "skills": [
+    "state tracking",
+    "inferring intent from speech",
+    "respecting others' moves"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Make a kanban board with columns To Do, In Progress, and Done. Cards: 'Design login page', 'Set up CI', 'Write API docs', 'User interviews', 'Fix memory leak'. They all start in To Do.",
+      "events": [],
+      "checks": [
+        {
+          "check": "frames",
+          "weight": 1,
+          "label": "frames",
+          "titles": [
+            "To Do",
+            "In Progress",
+            "Done"
+          ]
+        },
+        {
+          "check": "order",
+          "weight": 0.5,
+          "label": "columns left to right",
+          "axis": "x",
+          "where": {
+            "type": "frame"
+          },
+          "items": [
+            "To Do",
+            "In Progress",
+            "Done"
+          ]
+        },
+        {
+          "check": "in_frame",
+          "weight": 2,
+          "label": "cards start in To Do",
+          "items": [
+            {
+              "text": "Design login page",
+              "frame": "To Do"
+            },
+            {
+              "text": "Set up CI",
+              "frame": "To Do"
+            },
+            {
+              "text": "Write API docs",
+              "frame": "To Do"
+            },
+            {
+              "text": "User interviews",
+              "frame": "To Do"
+            },
+            {
+              "text": "Fix memory leak",
+              "frame": "To Do"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Update the board from Sam's update.",
+      "events": [
+        {
+          "op": "say",
+          "actor": "human:sam",
+          "text": "Quick update: I started on CI and the memory leak. Oh, and the user interviews are finished, Maya ran them."
+        }
+      ],
+      "checks": [
+        {
+          "check": "in_frame",
+          "weight": 3,
+          "label": "statuses updated",
+          "items": [
+            {
+              "text": "Set up CI",
+              "frame": "In Progress"
+            },
+            {
+              "text": "Fix memory leak",
+              "frame": "In Progress"
+            },
+            {
+              "text": "User interviews",
+              "frame": "Done"
+            },
+            {
+              "text": "Design login page",
+              "frame": "To Do"
+            },
+            {
+              "text": "Write API docs",
+              "frame": "To Do"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Set up CI is done now. Also tidy the columns so no cards overlap.",
+      "events": [
+        {
+          "op": "move",
+          "actor": "human:lee",
+          "target": "Design login page",
+          "near": "Fix memory leak",
+          "offset": [
+            30,
+            40
+          ]
+        }
+      ],
+      "checks": []
+    }
+  ],
+  "final_checks": [
+    {
+      "check": "in_frame",
+      "weight": 4,
+      "label": "final statuses (Lee's move respected)",
+      "items": [
+        {
+          "text": "Design login page",
+          "frame": "In Progress"
+        },
+        {
+          "text": "Fix memory leak",
+          "frame": "In Progress"
+        },
+        {
+          "text": "Set up CI",
+          "frame": "Done"
+        },
+        {
+          "text": "User interviews",
+          "frame": "Done"
+        },
+        {
+          "text": "Write API docs",
+          "frame": "To Do"
+        }
+      ]
+    },
+    {
+      "check": "count",
+      "weight": 1,
+      "label": "no duplicate cards",
+      "selector": {
+        "type": [
+          "sticky",
+          "shape"
+        ]
+      },
+      "min": 5,
+      "max": 5,
+      "strict": true
+    },
+    {
+      "check": "no_overlap",
+      "weight": 2,
+      "label": "no overlap"
+    }
+  ],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 26,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "To Do",
+          "x": 100,
+          "y": 100,
+          "w": 400,
+          "h": 1100
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "In Progress",
+          "x": 550,
+          "y": 100,
+          "w": 400,
+          "h": 1100
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Done",
+          "x": 1000,
+          "y": 100,
+          "w": 400,
+          "h": 1100
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Design login page",
+          "x": 130,
+          "y": 170,
+          "w": 340,
+          "h": 100
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Set up CI",
+          "x": 130,
+          "y": 290,
+          "w": 340,
+          "h": 100
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Write API docs",
+          "x": 130,
+          "y": 410,
+          "w": 340,
+          "h": 100
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "User interviews",
+          "x": 130,
+          "y": 530,
+          "w": 340,
+          "h": 100
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Fix memory leak",
+          "x": 130,
+          "y": 650,
+          "w": 340,
+          "h": 100
+        }
+      }
+    ],
+    [
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Set up CI"
+                }
+              },
+              "x": 580,
+              "y": 170
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Fix memory leak"
+                }
+              },
+              "x": 580,
+              "y": 290
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "User interviews"
+                }
+              },
+              "x": 1030,
+              "y": 170
+            }
+          ]
+        }
+      }
+    ],
+    [
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Set up CI"
+                }
+              },
+              "x": 1030,
+              "y": 290
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Design login page"
+                }
+              },
+              "x": 580,
+              "y": 410
+            }
+          ]
+        }
+      }
+    ]
+  ]
+}

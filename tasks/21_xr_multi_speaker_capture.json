@@ -1,0 +1,216 @@
+{
+  "id": "xr_multi_speaker_capture",
+  "category": "xr_spatial",
+  "title": "Capture a noisy multi-speaker conversation",
+  "difficulty": "medium",
+  "skills": [
+    "speech capture",
+    "speaker attribution",
+    "filtering"
+  ],
+  "setting": "A mixed-reality room. The board is a wall-sized virtual canvas that everyone sees in their headset. People talk and point; pointing and gaze arrive as board coordinates. Layers: 0 is the board surface, 1 is the focus layer floating in front of the wall, -1 is the background layer behind it.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    },
+    "lee": {
+      "name": "Lee",
+      "color": "green"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Discussion",
+      "x": 100,
+      "y": 100,
+      "w": 1200,
+      "h": 800,
+      "author": "human:facilitator"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Capture the key points from that exchange as stickies in the Discussion frame, one point per sticky, colored by who said it using each person's participant color. Leave out the small talk.",
+      "events": [
+        {
+          "op": "say",
+          "actor": "human:maya",
+          "text": "Um, so, okay, I think we should, like, pilot the new onboarding with just the EU region first."
+        },
+        {
+          "op": "say",
+          "actor": "human:sam",
+          "text": "Sorry, is anyone else's audio echoing? ... Okay, it's fine now."
+        },
+        {
+          "op": "say",
+          "actor": "human:lee",
+          "text": "The EU pilot makes sense, but we need the translated help docs ready before we start."
+        },
+        {
+          "op": "say",
+          "actor": "human:maya",
+          "text": "Right, and we should measure activation rate over the first two weeks."
+        },
+        {
+          "op": "say",
+          "actor": "human:sam",
+          "text": "I can own the dashboard for activation."
+        },
+        {
+          "op": "say",
+          "actor": "human:lee",
+          "text": "My coffee's getting cold, ha. Anyway, let's make sure support gets trained too."
+        }
+      ],
+      "checks": [
+        {
+          "check": "texts_present",
+          "weight": 3,
+          "label": "key points captured",
+          "where": {
+            "frame": "Discussion"
+          },
+          "items": [
+            "pilot EU onboarding",
+            "translated help docs",
+            "activation rate two weeks",
+            "activation dashboard",
+            "train support|support trained"
+          ]
+        },
+        {
+          "check": "texts_absent",
+          "weight": 1,
+          "label": "small talk left out",
+          "items": [
+            "audio|echo",
+            "coffee"
+          ]
+        },
+        {
+          "check": "property",
+          "weight": 2,
+          "label": "colored by speaker",
+          "items": [
+            {
+              "text": "pilot EU onboarding",
+              "field": "color",
+              "value": "pink"
+            },
+            {
+              "text": "translated help docs",
+              "field": "color",
+              "value": "green"
+            },
+            {
+              "text": "activation rate two weeks",
+              "field": "color",
+              "value": "pink"
+            },
+            {
+              "text": "activation dashboard",
+              "field": "color",
+              "value": "blue"
+            },
+            {
+              "text": "train support|support trained",
+              "field": "color",
+              "value": "green"
+            }
+          ]
+        },
+        {
+          "check": "max_words",
+          "weight": 0.5,
+          "label": "max words",
+          "selector": {
+            "type": "sticky"
+          },
+          "max": 15
+        },
+        {
+          "check": "in_frame",
+          "weight": 1,
+          "label": "in frame",
+          "selector": {
+            "author": "agent"
+          },
+          "frame": "Discussion"
+        },
+        {
+          "check": "no_overlap",
+          "weight": 0.5,
+          "label": "no overlap"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 12,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Pilot new onboarding in the EU region first",
+          "x": 150,
+          "y": 200,
+          "color": "pink"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Translated help docs ready before the pilot",
+          "x": 360,
+          "y": 200,
+          "color": "green"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Measure activation rate over the first two weeks",
+          "x": 570,
+          "y": 200,
+          "color": "pink"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Sam owns the activation dashboard",
+          "x": 780,
+          "y": 200,
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Train the support team before launch",
+          "x": 990,
+          "y": 200,
+          "color": "green"
+        }
+      }
+    ]
+  ]
+}

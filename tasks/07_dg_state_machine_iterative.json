@@ -1,0 +1,397 @@
+{
+  "id": "dg_state_machine_iterative",
+  "category": "diagramming",
+  "title": "Evolve a state machine with a collaborator",
+  "difficulty": "medium",
+  "skills": [
+    "state machines",
+    "iteration",
+    "respecting collaborator input"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Draw a state machine for an order: Created → Paid → Shipped → Delivered. Also Created → Cancelled and Paid → Cancelled.",
+      "events": [],
+      "checks": [
+        {
+          "check": "graph",
+          "weight": 3,
+          "label": "initial state machine",
+          "nodes": [
+            "Created",
+            "Paid",
+            "Shipped",
+            "Delivered",
+            "Cancelled"
+          ],
+          "edges": [
+            [
+              "Created",
+              "Paid"
+            ],
+            [
+              "Paid",
+              "Shipped"
+            ],
+            [
+              "Shipped",
+              "Delivered"
+            ],
+            [
+              "Created",
+              "Cancelled"
+            ],
+            [
+              "Paid",
+              "Cancelled"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "speaker": "human:maya",
+      "prompt": "I added 'Refunded' as a sticky. Wire it in: both Delivered and Cancelled can move to Refunded. And swap my sticky for a proper state shape like the others.",
+      "events": [
+        {
+          "op": "create",
+          "actor": "human:maya",
+          "near": "Delivered",
+          "offset": [
+            0,
+            260
+          ],
+          "element": {
+            "type": "sticky",
+            "text": "Refunded",
+            "color": "pink"
+          }
+        }
+      ],
+      "checks": [
+        {
+          "check": "graph",
+          "weight": 3,
+          "label": "Refunded wired in",
+          "nodes": [
+            "Created",
+            "Paid",
+            "Shipped",
+            "Delivered",
+            "Cancelled",
+            "Refunded"
+          ],
+          "edges": [
+            [
+              "Created",
+              "Paid"
+            ],
+            [
+              "Paid",
+              "Shipped"
+            ],
+            [
+              "Shipped",
+              "Delivered"
+            ],
+            [
+              "Created",
+              "Cancelled"
+            ],
+            [
+              "Paid",
+              "Cancelled"
+            ],
+            [
+              "Delivered",
+              "Refunded"
+            ],
+            [
+              "Cancelled",
+              "Refunded"
+            ]
+          ]
+        },
+        {
+          "check": "property",
+          "weight": 1,
+          "label": "Refunded is a shape",
+          "items": [
+            {
+              "text": "Refunded",
+              "field": "type",
+              "value": "shape"
+            }
+          ]
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "sticky replaced, not duplicated",
+          "selector": {
+            "type": "sticky",
+            "text": "Refunded"
+          },
+          "max": 0
+        }
+      ]
+    },
+    {
+      "speaker": "human:maya",
+      "prompt": "Rename 'Shipped' to 'In Transit'. Then color Refunded green and Cancelled red.",
+      "events": [],
+      "checks": []
+    }
+  ],
+  "final_checks": [
+    {
+      "check": "graph",
+      "weight": 3,
+      "label": "final state machine",
+      "nodes": [
+        "Created",
+        "Paid",
+        "In Transit",
+        "Delivered",
+        "Cancelled",
+        "Refunded"
+      ],
+      "edges": [
+        [
+          "Created",
+          "Paid"
+        ],
+        [
+          "Paid",
+          "In Transit"
+        ],
+        [
+          "In Transit",
+          "Delivered"
+        ],
+        [
+          "Created",
+          "Cancelled"
+        ],
+        [
+          "Paid",
+          "Cancelled"
+        ],
+        [
+          "Delivered",
+          "Refunded"
+        ],
+        [
+          "Cancelled",
+          "Refunded"
+        ]
+      ]
+    },
+    {
+      "check": "texts_absent",
+      "weight": 1,
+      "label": "old name gone",
+      "items": [
+        "Shipped"
+      ]
+    },
+    {
+      "check": "property",
+      "weight": 2,
+      "label": "colors applied",
+      "items": [
+        {
+          "text": "Refunded",
+          "field": "color",
+          "value": "green"
+        },
+        {
+          "text": "Cancelled",
+          "field": "color",
+          "value": "red"
+        }
+      ]
+    },
+    {
+      "check": "no_overlap",
+      "weight": 1,
+      "label": "no overlap",
+      "selector": {
+        "type": [
+          "shape",
+          "sticky"
+        ]
+      }
+    }
+  ],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 40,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 100,
+          "y": 300,
+          "text": "Created"
+        },
+        "as": "Created"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 400,
+          "y": 300,
+          "text": "Paid"
+        },
+        "as": "Paid"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 700,
+          "y": 300,
+          "text": "Shipped"
+        },
+        "as": "Shipped"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 1000,
+          "y": 300,
+          "text": "Delivered"
+        },
+        "as": "Delivered"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 400,
+          "y": 560,
+          "text": "Cancelled"
+        },
+        "as": "Cancelled"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Created",
+          "target_id": "$Paid"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Paid",
+          "target_id": "$Shipped"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Shipped",
+          "target_id": "$Delivered"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Created",
+          "target_id": "$Cancelled"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Paid",
+          "target_id": "$Cancelled"
+        }
+      }
+    ],
+    [
+      {
+        "tool": "delete_elements",
+        "args": {
+          "ids": [
+            {
+              "$find": {
+                "type": "sticky",
+                "query": "Refunded"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rounded_rect",
+          "x": 1000,
+          "y": 560,
+          "text": "Refunded"
+        },
+        "as": "Refunded"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Delivered",
+          "target_id": "$Refunded"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$Cancelled",
+          "target_id": "$Refunded"
+        }
+      }
+    ],
+    [
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "$Shipped",
+          "text": "In Transit"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "$Refunded",
+          "color": "green"
+        }
+      },
+      {
+        "tool": "update_element",
+        "args": {
+          "id": "$Cancelled",
+          "color": "red"
+        }
+      }
+    ]
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "id": "nt_meeting_capture",
+  "category": "note_taking",
+  "title": "Capture a product sync into decisions, actions, questions",
+  "difficulty": "easy",
+  "skills": [
+    "summarization",
+    "categorization",
+    "attribution"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Here's the transcript from our product sync. Capture it on the board with three labeled areas: Decisions, Action Items, and Open Questions. One point per sticky, keep them short, and put the owner's name on every action item.\n\nPriya: We're going with Stripe for payments. That's final.\nSam: OK. I'll draft the migration plan by Friday.\nPriya: I'm still not sure whether we support Apple Pay at launch.\nLee: Design review moves to Thursdays starting next week. Everyone agreed? (All: yes.)\nLee: I'll update the calendar invite.\nSam: Do we need legal to review the new terms of service?\nPriya: Jordan should send the vendor contract to finance.",
+      "events": [],
+      "checks": [
+        {
+          "check": "frames",
+          "weight": 2,
+          "label": "three labeled areas",
+          "titles": [
+            "Decisions",
+            "Action Items",
+            "Open Questions"
+          ]
+        },
+        {
+          "check": "in_frame",
+          "weight": 4,
+          "label": "points filed in the right area",
+          "items": [
+            {
+              "text": "Stripe",
+              "frame": "Decisions"
+            },
+            {
+              "text": "design review Thursday",
+              "frame": "Decisions"
+            },
+            {
+              "text": "migration plan",
+              "frame": "Action Items"
+            },
+            {
+              "text": "calendar invite",
+              "frame": "Action Items"
+            },
+            {
+              "text": "vendor contract",
+              "frame": "Action Items"
+            },
+            {
+              "text": "Apple Pay",
+              "frame": "Open Questions"
+            },
+            {
+              "text": "legal review|legal terms",
+              "frame": "Open Questions"
+            }
+          ]
+        },
+        {
+          "check": "texts_present",
+          "weight": 2,
+          "label": "owners on action items",
+          "where": {
+            "frame": "Action Items"
+          },
+          "items": [
+            "Sam migration plan",
+            "Lee calendar invite",
+            "Jordan vendor contract"
+          ]
+        },
+        {
+          "check": "max_words",
+          "weight": 1,
+          "label": "stickies are short",
+          "selector": {
+            "type": "sticky"
+          },
+          "max": 14
+        },
+        {
+          "check": "count",
+          "weight": 0.5,
+          "label": "one point per sticky",
+          "selector": {
+            "type": "sticky",
+            "author": "agent"
+          },
+          "min": 6,
+          "max": 10
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 22,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Decisions",
+          "x": 100,
+          "y": 100,
+          "w": 560,
+          "h": 760
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Action Items",
+          "x": 700,
+          "y": 100,
+          "w": 560,
+          "h": 760
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Open Questions",
+          "x": 1300,
+          "y": 100,
+          "w": 560,
+          "h": 760
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Payments: going with Stripe (final)",
+          "x": 130,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Design review moves to Thursdays",
+          "x": 310,
+          "y": 170
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Sam: draft migration plan by Friday",
+          "x": 730,
+          "y": 170,
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Lee: update design review calendar invite",
+          "x": 910,
+          "y": 170,
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Jordan: send vendor contract to finance",
+          "x": 1090,
+          "y": 170,
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Support Apple Pay at launch?",
+          "x": 1330,
+          "y": 170,
+          "color": "pink"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Need legal review of new terms of service?",
+          "x": 1510,
+          "y": 170,
+          "color": "pink"
+        }
+      }
+    ]
+  ]
+}

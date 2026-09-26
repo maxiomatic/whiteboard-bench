@@ -1,0 +1,479 @@
+{
+  "id": "bs_affinity_mapping",
+  "category": "brainstorming",
+  "title": "Affinity map of user-research quotes",
+  "difficulty": "hard",
+  "skills": [
+    "synthesis",
+    "clustering",
+    "labeling"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Interview quotes",
+      "x": 100,
+      "y": 100,
+      "w": 1250,
+      "h": 720,
+      "author": "human:maya"
+    },
+    {
+      "type": "sticky",
+      "text": "Too expensive for a weeknight dinner",
+      "x": 130,
+      "y": 170,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "So much plastic in every box",
+      "x": 330,
+      "y": 170,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Recipes take way longer than advertised",
+      "x": 530,
+      "y": 170,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "I always forget to skip a week",
+      "x": 730,
+      "y": 170,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "The menu repeats too often",
+      "x": 930,
+      "y": 170,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "I'd order more with a cheaper plan",
+      "x": 1130,
+      "y": 170,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "I feel guilty about all the ice packs",
+      "x": 130,
+      "y": 370,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Too much chopping after work",
+      "x": 330,
+      "y": 370,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Can't change my delivery day easily",
+      "x": 530,
+      "y": 370,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Want more vegetarian variety",
+      "x": 730,
+      "y": 370,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "The delivery fee feels like a scam",
+      "x": 930,
+      "y": 370,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Wish the packaging was compostable",
+      "x": 1130,
+      "y": 370,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "I want 15-minute options",
+      "x": 130,
+      "y": 570,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Pausing my subscription was painful",
+      "x": 330,
+      "y": 570,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Same five cuisines every week",
+      "x": 530,
+      "y": 570,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "The grocery store is half the cost",
+      "x": 730,
+      "y": 570,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Cleanup is a nightmare",
+      "x": 930,
+      "y": 570,
+      "author": "human:maya",
+      "color": "yellow"
+    },
+    {
+      "type": "sticky",
+      "text": "Skipping requires too many clicks",
+      "x": 1130,
+      "y": 570,
+      "author": "human:maya",
+      "color": "yellow"
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Here are 18 quotes from our meal-kit user interviews. Do an affinity map: group them into themes, with a labeled frame per theme. Don't reword the quotes.",
+      "events": [],
+      "checks": [
+        {
+          "check": "clusters",
+          "weight": 5,
+          "label": "grouping matches the underlying themes",
+          "groups": [
+            [
+              "Too expensive for a weeknight dinner",
+              "I'd order more with a cheaper plan",
+              "The delivery fee feels like a scam",
+              "The grocery store is half the cost"
+            ],
+            [
+              "So much plastic in every box",
+              "I feel guilty about all the ice packs",
+              "Wish the packaging was compostable"
+            ],
+            [
+              "Recipes take way longer than advertised",
+              "Too much chopping after work",
+              "I want 15-minute options",
+              "Cleanup is a nightmare"
+            ],
+            [
+              "I always forget to skip a week",
+              "Can't change my delivery day easily",
+              "Pausing my subscription was painful",
+              "Skipping requires too many clicks"
+            ],
+            [
+              "The menu repeats too often",
+              "Want more vegetarian variety",
+              "Same five cuisines every week"
+            ]
+          ],
+          "method": "frame"
+        },
+        {
+          "check": "preserve_human",
+          "weight": 2,
+          "label": "quotes kept verbatim"
+        },
+        {
+          "check": "count",
+          "weight": 1,
+          "label": "a sensible number of themes",
+          "selector": {
+            "type": "frame",
+            "author": "agent"
+          },
+          "min": 4,
+          "max": 7
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap"
+        },
+        {
+          "check": "rubric",
+          "weight": 1,
+          "label": "theme labels (judge)",
+          "question": "Do the theme frame titles name the underlying user need clearly and concisely?"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 14,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Price & value",
+          "x": 100,
+          "y": 900,
+          "w": 420,
+          "h": 460
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Packaging waste",
+          "x": 540,
+          "y": 900,
+          "w": 420,
+          "h": 460
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Time & effort",
+          "x": 980,
+          "y": 900,
+          "w": 420,
+          "h": 460
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Scheduling flexibility",
+          "x": 1420,
+          "y": 900,
+          "w": 420,
+          "h": 460
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Menu variety",
+          "x": 1860,
+          "y": 900,
+          "w": 420,
+          "h": 460
+        }
+      },
+      {
+        "tool": "move_elements",
+        "args": {
+          "moves": [
+            {
+              "id": {
+                "$find": {
+                  "query": "Too expensive for a weeknight dinner"
+                }
+              },
+              "x": 120,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "I'd order more with a cheaper plan"
+                }
+              },
+              "x": 320,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "The delivery fee feels like a scam"
+                }
+              },
+              "x": 120,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "The grocery store is half the cost"
+                }
+              },
+              "x": 320,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "So much plastic in every box"
+                }
+              },
+              "x": 560,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "I feel guilty about all the ice packs"
+                }
+              },
+              "x": 760,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Wish the packaging was compostable"
+                }
+              },
+              "x": 560,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Recipes take way longer than advertised"
+                }
+              },
+              "x": 1000,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Too much chopping after work"
+                }
+              },
+              "x": 1200,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "I want 15-minute options"
+                }
+              },
+              "x": 1000,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Cleanup is a nightmare"
+                }
+              },
+              "x": 1200,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "I always forget to skip a week"
+                }
+              },
+              "x": 1440,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Can't change my delivery day easily"
+                }
+              },
+              "x": 1640,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Pausing my subscription was painful"
+                }
+              },
+              "x": 1440,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Skipping requires too many clicks"
+                }
+              },
+              "x": 1640,
+              "y": 1150
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "The menu repeats too often"
+                }
+              },
+              "x": 1880,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Want more vegetarian variety"
+                }
+              },
+              "x": 2080,
+              "y": 960
+            },
+            {
+              "id": {
+                "$find": {
+                  "query": "Same five cuisines every week"
+                }
+              },
+              "x": 1880,
+              "y": 1150
+            }
+          ]
+        }
+      }
+    ]
+  ]
+}

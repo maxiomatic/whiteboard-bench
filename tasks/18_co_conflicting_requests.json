@@ -1,0 +1,160 @@
+{
+  "id": "co_conflicting_requests",
+  "category": "collaboration",
+  "title": "Mediate conflicting requests from two people",
+  "difficulty": "hard",
+  "skills": [
+    "mediation",
+    "neutrality",
+    "making disagreement visible"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    },
+    "maya": {
+      "name": "Maya",
+      "color": "pink"
+    },
+    "sam": {
+      "name": "Sam",
+      "color": "blue"
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [
+    {
+      "type": "frame",
+      "text": "Homepage headline",
+      "x": 100,
+      "y": 100,
+      "w": 1000,
+      "h": 600,
+      "author": "human:facilitator"
+    },
+    {
+      "type": "sticky",
+      "text": "Build faster together",
+      "x": 150,
+      "y": 200,
+      "author": "human:facilitator",
+      "color": "yellow",
+      "w": 300,
+      "h": 120
+    }
+  ],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "You heard them both. Handle it the way a good facilitator would.",
+      "events": [
+        {
+          "op": "say",
+          "actor": "human:maya",
+          "text": "Make the headline punchier. Something like 'Ship it.'"
+        },
+        {
+          "op": "say",
+          "actor": "human:sam",
+          "text": "No, it should stay descriptive, like 'The collaborative workspace for engineering teams'."
+        }
+      ],
+      "checks": [
+        {
+          "check": "texts_present",
+          "weight": 2,
+          "label": "both proposals on the board",
+          "items": [
+            "Ship it",
+            "collaborative workspace engineering teams"
+          ]
+        },
+        {
+          "check": "texts_present",
+          "weight": 1,
+          "label": "proposals attributed",
+          "items": [
+            "Maya",
+            "Sam"
+          ]
+        },
+        {
+          "check": "preserve_human",
+          "weight": 1,
+          "label": "current headline not overwritten"
+        },
+        {
+          "check": "aligned",
+          "weight": 1,
+          "label": "options shown side by side",
+          "items": [
+            "Ship it",
+            "collaborative workspace"
+          ],
+          "axis": "y",
+          "tol": 40
+        },
+        {
+          "check": "said",
+          "weight": 1,
+          "label": "invites the group to decide",
+          "any": true,
+          "items": [
+            "vote",
+            "decide",
+            "which one",
+            "prefer",
+            "test both",
+            "pick"
+          ]
+        },
+        {
+          "check": "rubric",
+          "weight": 1,
+          "label": "facilitation quality (judge)",
+          "question": "Did the AI surface both proposals fairly and hand the decision back to the group (vote, test, or discuss) instead of picking a winner on its own?"
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 8,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Option A (Maya): Ship it.",
+          "x": 150,
+          "y": 400,
+          "w": 300,
+          "h": 120,
+          "color": "pink"
+        }
+      },
+      {
+        "tool": "create_sticky",
+        "args": {
+          "text": "Option B (Sam): The collaborative workspace for engineering teams",
+          "x": 500,
+          "y": 400,
+          "w": 300,
+          "h": 120,
+          "color": "blue"
+        }
+      },
+      {
+        "tool": "say",
+        "args": {
+          "message": "I've put Maya's and Sam's options side by side under the current headline. Want to dot-vote, or test both on the landing page and decide from the data?"
+        }
+      }
+    ]
+  ]
+}

@@ -1,0 +1,403 @@
+{
+  "id": "dg_system_architecture",
+  "category": "diagramming",
+  "title": "Tiered system architecture diagram",
+  "difficulty": "medium",
+  "skills": [
+    "architecture diagrams",
+    "grouping",
+    "notation"
+  ],
+  "setting": "A shared digital whiteboard used by a small team on laptops.",
+  "participants": {
+    "facilitator": {
+      "name": "Alex",
+      "note": "Runs the session."
+    }
+  },
+  "board": {
+    "width": 4000,
+    "height": 3000
+  },
+  "initial_elements": [],
+  "turns": [
+    {
+      "speaker": "human:facilitator",
+      "prompt": "Sketch our system architecture with three frames: Clients, Services, and Data. Clients: Web App and Mobile App. Services: API Gateway, Auth Service, Orders Service, Notification Worker. Data: Postgres, Redis Cache, Message Queue. Flows: both apps call the API Gateway. The gateway calls Auth Service and Orders Service. Orders Service reads and writes Postgres, uses Redis Cache, and publishes to the Message Queue. Notification Worker consumes from the Message Queue. Draw datastores as cylinders.",
+      "events": [],
+      "checks": [
+        {
+          "check": "frames",
+          "weight": 1,
+          "label": "frames",
+          "titles": [
+            "Clients",
+            "Services",
+            "Data"
+          ]
+        },
+        {
+          "check": "in_frame",
+          "weight": 2,
+          "label": "components in the right tier",
+          "items": [
+            {
+              "text": "Web App",
+              "frame": "Clients"
+            },
+            {
+              "text": "Mobile App",
+              "frame": "Clients"
+            },
+            {
+              "text": "API Gateway",
+              "frame": "Services"
+            },
+            {
+              "text": "Auth Service",
+              "frame": "Services"
+            },
+            {
+              "text": "Orders Service",
+              "frame": "Services"
+            },
+            {
+              "text": "Notification Worker",
+              "frame": "Services"
+            },
+            {
+              "text": "Postgres",
+              "frame": "Data"
+            },
+            {
+              "text": "Redis Cache",
+              "frame": "Data"
+            },
+            {
+              "text": "Message Queue",
+              "frame": "Data"
+            }
+          ]
+        },
+        {
+          "check": "graph",
+          "weight": 4,
+          "label": "all connections present",
+          "directed": false,
+          "nodes": [
+            "Web App",
+            "Mobile App",
+            "API Gateway",
+            "Auth Service",
+            "Orders Service",
+            "Notification Worker",
+            "Postgres",
+            "Redis Cache",
+            "Message Queue"
+          ],
+          "edges": [
+            [
+              "Web App",
+              "API Gateway"
+            ],
+            [
+              "Mobile App",
+              "API Gateway"
+            ],
+            [
+              "API Gateway",
+              "Auth Service"
+            ],
+            [
+              "API Gateway",
+              "Orders Service"
+            ],
+            [
+              "Orders Service",
+              "Postgres"
+            ],
+            [
+              "Orders Service",
+              "Redis Cache"
+            ],
+            [
+              "Orders Service",
+              "Message Queue"
+            ],
+            [
+              "Message Queue",
+              "Notification Worker"
+            ]
+          ]
+        },
+        {
+          "check": "graph",
+          "weight": 2,
+          "label": "arrow directions follow the flow",
+          "nodes": [
+            "Web App",
+            "Mobile App",
+            "API Gateway",
+            "Auth Service",
+            "Orders Service",
+            "Message Queue",
+            "Notification Worker"
+          ],
+          "edges": [
+            [
+              "Web App",
+              "API Gateway"
+            ],
+            [
+              "Mobile App",
+              "API Gateway"
+            ],
+            [
+              "API Gateway",
+              "Auth Service"
+            ],
+            [
+              "API Gateway",
+              "Orders Service"
+            ],
+            [
+              "Orders Service",
+              "Message Queue"
+            ],
+            [
+              "Message Queue",
+              "Notification Worker"
+            ]
+          ]
+        },
+        {
+          "check": "node_kinds",
+          "weight": 1,
+          "label": "datastores are cylinders",
+          "items": [
+            {
+              "text": "Postgres",
+              "kind": "cylinder"
+            },
+            {
+              "text": "Redis Cache",
+              "kind": "cylinder"
+            }
+          ]
+        },
+        {
+          "check": "no_overlap",
+          "weight": 1,
+          "label": "no overlap",
+          "selector": {
+            "type": [
+              "shape",
+              "sticky"
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "final_checks": [],
+  "max_calls_per_turn": 60,
+  "efficient_calls": 42,
+  "reference_solution": [
+    [
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Clients",
+          "x": 100,
+          "y": 100,
+          "w": 500,
+          "h": 700
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Services",
+          "x": 700,
+          "y": 100,
+          "w": 700,
+          "h": 700
+        }
+      },
+      {
+        "tool": "create_frame",
+        "args": {
+          "title": "Data",
+          "x": 1500,
+          "y": 100,
+          "w": 500,
+          "h": 700
+        }
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 260,
+          "y": 250,
+          "w": 180,
+          "h": 90,
+          "text": "Web App"
+        },
+        "as": "web"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 260,
+          "y": 450,
+          "w": 180,
+          "h": 90,
+          "text": "Mobile App"
+        },
+        "as": "mobile"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 760,
+          "y": 350,
+          "w": 200,
+          "h": 90,
+          "text": "API Gateway"
+        },
+        "as": "gw"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1150,
+          "y": 200,
+          "w": 200,
+          "h": 90,
+          "text": "Auth Service"
+        },
+        "as": "auth"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1150,
+          "y": 400,
+          "w": 200,
+          "h": 90,
+          "text": "Orders Service"
+        },
+        "as": "orders"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1150,
+          "y": 600,
+          "w": 200,
+          "h": 90,
+          "text": "Notification Worker"
+        },
+        "as": "notif"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "cylinder",
+          "x": 1650,
+          "y": 200,
+          "w": 180,
+          "h": 110,
+          "text": "Postgres"
+        },
+        "as": "pg"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "cylinder",
+          "x": 1650,
+          "y": 380,
+          "w": 180,
+          "h": 110,
+          "text": "Redis Cache"
+        },
+        "as": "redis"
+      },
+      {
+        "tool": "create_shape",
+        "args": {
+          "kind": "rect",
+          "x": 1650,
+          "y": 580,
+          "w": 180,
+          "h": 90,
+          "text": "Message Queue"
+        },
+        "as": "mq"
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$web",
+          "target_id": "$gw"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$mobile",
+          "target_id": "$gw"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$gw",
+          "target_id": "$auth"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$gw",
+          "target_id": "$orders"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$orders",
+          "target_id": "$pg"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$orders",
+          "target_id": "$redis"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$orders",
+          "target_id": "$mq"
+        }
+      },
+      {
+        "tool": "create_connector",
+        "args": {
+          "source_id": "$mq",
+          "target_id": "$notif"
+        }
+      }
+    ]
+  ]
+}
