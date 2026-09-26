@@ -19,3 +19,13 @@ retries = 1
 
 # A player with no tool call for this long counts as stalled and is retried
 stall_minutes = 10
+
+# Who grades rubric checks, the 6 tasks with a taste question code can't grade:
+#   "llm"   a wbench-judge subagent per rubric task (at most 6 small subagents per full run)
+#   "human" nobody during the run; score them yourself with `just sub-judge <run>`
+#   "off"   rubric checks are left out of the score (not scored zero)
+# Scores are only comparable across runs with the same judge mode. See SKILL.md.
+judge = "llm"
+
+# Model for the LLM judge: haiku | sonnet | opus | fable | a full model id | "inherit"
+judge_model = "inherit"

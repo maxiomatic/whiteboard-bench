@@ -54,3 +54,33 @@ def test_run_a_category_in_parallel_with_one_abandoned_player(make_run, capsys):
     wb.main(["aggregate", str(run)])
     out = json.loads(capsys.readouterr().out.splitlines()[-1])
     assert out["overall"] == 1.0 and out["tasks"] == 4 and out["missing"] == []
+
+
+def test_llm_judge_runs_after_the_player_and_counts(make_run, capsys):
+    run = make_run("dg_org_chart", "bs_yes_and", judge="llm")  # bs_yes_and has a rubric check
+    watcher = wb.Watcher(run)
+    watcher.poll()
+    events, judged = [], []
+    for task in wb.next_tasks(run):
+        replay_through_mcp(run, task)
+        events += watcher.poll()
+    assert "judging bs_yes_and" in events and "done dg_org_chart (1/2 finished)" in events
+    for _ in range(50):
+        for task in wb.judges_to_spawn(run):  # what `just sub-next` hands to wbench-judge
+            judged.append(task)
+            for i, _ in enumerate(wb.rubric(run, task)["items"]):
+                wb.record_score(run, task, i, "llm", 7, "builds on most ideas")
+            wb.main(["timing", str(run), task, "--tokens", "500", "--ms", "9", "--role", "judge"])
+        events += watcher.poll()
+        if events and events[-1].startswith("all done"):
+            break
+    assert judged == ["bs_yes_and"]
+    assert wb.judges_to_spawn(run) == []  # handed out once
+    assert "judged bs_yes_and (2/2 finished)" in events and events[-1] == "all done 2/2"
+    capsys.readouterr()
+    out = wb.aggregate([run])
+    assert out["judge"] == "llm" and out["awaiting_judgement"] == []
+    result = next(r for r in json.loads((run / "results.json").read_text())["results"] if r["task_id"] == "bs_yes_and")
+    rubric = next(c for t in result["turns"] for c in t["checks"] + result["final_checks"] if c["check"] == "rubric")
+    assert rubric["score"] == 0.7 and "llm 7/10" in rubric["detail"]
+    assert 0 < result["score"] < 1.0

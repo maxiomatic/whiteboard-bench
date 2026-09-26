@@ -1,6 +1,6 @@
 # WhiteboardBench commands. Run `just` to list them.
 
-set shell := ["bash", "-euo", "pipefail", "-c"]
+set shell := ["bash", "-eo", "pipefail", "-c"]
 
 default:
     @just --list
@@ -50,7 +50,7 @@ build-tasks:
 sub-list:
     @uv run --quiet --script {{skill}}/scripts/wb.py list
 
-# Create a run and make it active: just sub-new [selector] [--model M] [--dry-run]
+# Create a run and make it active: just sub-new [selector] [--model M] [--judge llm|human|off] [--dry-run]
 sub-new *args:
     @uv run --quiet --script {{skill}}/scripts/wb.py new {{args}}
 
@@ -62,9 +62,21 @@ sub-next run:
 sub-retry run task:
     @uv run --quiet --script {{skill}}/scripts/wb.py retry {{run}} {{task}}
 
-# Record what a player cost (from the Agent completion notification)
-sub-timing run task tokens ms:
-    @uv run --quiet --script {{skill}}/scripts/wb.py timing {{run}} {{task}} --tokens {{tokens}} --ms {{ms}}
+# Record what a player or judge cost (from the Agent completion notification)
+sub-timing run task tokens ms role="player":
+    @uv run --quiet --script {{skill}}/scripts/wb.py timing {{run}} {{task}} --tokens {{tokens}} --ms {{ms}} --role {{role}}
+
+# Score rubric checks yourself at the terminal (judge = "human", or --rejudge an LLM-judged run)
+sub-judge run *args:
+    @uv run --quiet --script {{skill}}/scripts/wb.py judge {{run}} {{args}}
+
+# What the LLM judge grades for a task (used by wbench-judge)
+sub-rubric run task:
+    @uv run --quiet --script {{skill}}/scripts/wb.py rubric {{run}} {{task}}
+
+# Record a rubric score (used by wbench-judge)
+sub-score run task item score reason:
+    @uv run --quiet --script {{skill}}/scripts/wb.py score {{run}} {{task}} {{item}} {{score}} "{{reason}}"
 
 # Make an earlier run active again and requeue its unfinished tasks
 sub-resume run:

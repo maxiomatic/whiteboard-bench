@@ -13,6 +13,10 @@
                                          record what a player cost
     wb.py resume <run>                   make an old run active again and requeue unfinished tasks
     wb.py watch <run>                    one line per state change, for the Monitor tool
+    wb.py rubric <run> <task>            what an LLM judge grades (used by wbench-judge)
+    wb.py score <run> <task> <item> <0-10> <reason> [--judge llm|human]
+                                         record a rubric score
+    wb.py judge <run> [--rejudge]        score rubric checks yourself, at the terminal
     wb.py aggregate <run> [<run> ...]    merge results into results.json + report.html
 
 Selectors: a task by number, id or file stem (09, bs_divergent_ideas,
@@ -30,6 +34,13 @@ Task states, stored in <run>/<task>/status.json:
     failed     retries exhausted                                (written here)
 `stalled` is not stored: `watch` derives it from a spawned/playing task
 whose status hasn't changed for stall_minutes.
+
+Rubric checks (6 tasks) are graded after the player finishes. The board
+server stores what a grader needs in <task>/rubric.json; scores go in
+<task>/judge.json as {"<item>": {"llm": {...}, "human": {...}}}. A human
+score wins over an LLM score. A task with an unscored rubric check is
+reported as awaiting judgement and left out of the overall score until
+it is scored. With judge = "off" rubric checks are left out entirely.
 """
 from __future__ import annotations
 
@@ -45,15 +56,18 @@ import tomllib
 ROOT = pathlib.Path(os.environ.get("WBENCH_ROOT") or pathlib.Path(__file__).resolve().parents[4])
 sys.path.insert(0, str(ROOT))
 
+from wbench.harness import weighted  # noqa: E402
 from wbench.report import write_report  # noqa: E402
 from wbench.run import summarize  # noqa: E402
 
 RUNS = ROOT / "runs"
 CONFIG = pathlib.Path(__file__).resolve().parents[1] / "config.toml"
-DEFAULTS = {"select": "smoke", "model": "inherit", "concurrency": 6, "retries": 1, "stall_minutes": 10}
+DEFAULTS = {"select": "smoke", "model": "inherit", "judge": "llm", "judge_model": "inherit",
+            "concurrency": 6, "retries": 1, "stall_minutes": 10}
+JUDGE_MODES = ("llm", "human", "off")
 ACTIVE = {"spawned", "playing"}
 RETRYABLE = {"abandoned", "error", "stalled"}
-FINAL = {"done", "failed"}
+FINAL = {"done", "judged", "failed"}
 QUIET = {"pending", "spawned"}  # bookkeeping states the orchestrator already knows about
 
 
@@ -108,6 +122,8 @@ def load_config(path: pathlib.Path | None = None) -> dict:
     unknown = set(cfg) - set(DEFAULTS)
     if unknown:
         raise SystemExit(f"unknown key(s) in {path}: {', '.join(sorted(unknown))}")
+    if cfg["judge"] not in JUDGE_MODES:
+        raise SystemExit(f"judge in {path} must be one of {', '.join(JUDGE_MODES)} (got {cfg['judge']!r})")
     for key in ("concurrency", "retries", "stall_minutes"):
         if not isinstance(cfg[key], int) or cfg[key] < (1 if key != "retries" else 0):
             raise SystemExit(f"{key} in {path} must be a whole number (got {cfg[key]!r})")
@@ -121,6 +137,8 @@ def settings(a) -> dict:
         cfg["select"] = a.selector
     if a.model:
         cfg["model"] = a.model
+    if a.judge:
+        cfg["judge"] = a.judge
     return cfg
 
 
@@ -171,6 +189,154 @@ def archive_attempt(run: pathlib.Path, task: str):
         shutil.move(str(src), dest)
 
 
+
+# -- judging ---------------------------------------------------------------------
+
+def rubric(run: pathlib.Path, task: str) -> dict | None:
+    f = run / task / "rubric.json"
+    return json.loads(f.read_text()) if f.exists() else None
+
+
+def scores(run: pathlib.Path, task: str) -> dict:
+    f = run / task / "judge.json"
+    return json.loads(f.read_text()) if f.exists() else {}
+
+
+def record_score(run: pathlib.Path, task: str, item: int, judge: str, score, reason: str):
+    r = rubric(run, task)
+    if r is None:
+        raise SystemExit(f"task '{task}' has no rubric checks to score (or hasn't finished)")
+    if not 0 <= item < len(r["items"]):
+        raise SystemExit(f"item must be 0..{len(r['items']) - 1}")
+    if score is not None and not (isinstance(score, (int, float)) and 0 <= score <= 10):
+        raise SystemExit("score must be a number from 0 to 10")
+    s = scores(run, task)
+    s.setdefault(str(item), {})[judge] = {"score": score, "reason": reason, "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    (run / task / "judge.json").write_text(json.dumps(s, indent=2))
+
+
+def llm_judge_pending(run: pathlib.Path, task: str) -> bool:
+    """A finished task whose rubric checks still wait on the LLM judge (judge = "llm" only)."""
+    r = rubric(run, task)
+    if r is None or r["mode"] != "llm":
+        return False
+    s = scores(run, task)
+    return any("llm" not in s.get(str(i), {}) for i in range(len(r["items"])))
+
+
+def judge_prompt(r: dict, item: dict) -> str:
+    """The same materials and wording as wbench.judge.AnthropicJudge."""
+    return ("You are grading an AI collaborator's work on a shared whiteboard.\n\n"
+            f"Task: {r['title']}\nRequests made:\n" + "\n".join(f"- {p}" for p in item["requests"])
+            + f"\n\nFinal board elements (JSON lines):\n{item['board']}\n\n"
+            f"What the AI said:\n{item['said'] or '(nothing)'}\n\n"
+            f"Rubric question: {item['question']}\n"
+            "Score from 0 to 10 where 10 means an excellent human facilitator could not do better.")
+
+
+def cmd_rubric(a):
+    run = pathlib.Path(a.run)
+    r = rubric(run, a.task)
+    if r is None:
+        raise SystemExit(f"task '{a.task}' has no rubric checks to judge")
+    for i, item in enumerate(r["items"]):
+        print(f"=== item {i} ===\n{judge_prompt(r, item)}\n")
+
+
+def cmd_score(a):
+    run = pathlib.Path(a.run)
+    record_score(run, a.task, a.item, a.judge, a.score, a.reason)
+    print(json.dumps({"task": a.task, "item": a.item, "judge": a.judge, "score": a.score}))
+
+
+def review_page(r: dict, item: dict, svg: str | None) -> str:
+    esc = __import__("html").escape
+    requests = "".join(f"<li>{esc(p)}</li>" for p in item["requests"])
+    return f"""<!doctype html><html><head><meta charset="utf-8"><title>Judge: {esc(r['title'])}</title>
+<style>body{{font-family:system-ui,sans-serif;max-width:1100px;margin:24px auto;padding:0 16px;color:#222}}
+.q{{font-size:1.25em;background:#f4f4f8;border-left:4px solid #556;padding:12px 16px}}
+figure{{border:1px solid #ddd;border-radius:8px;padding:8px;margin:16px 0;overflow:auto}}figure svg{{max-width:100%;height:auto}}
+pre{{white-space:pre-wrap;background:#fafafa;padding:8px}}</style></head><body>
+<h1>{esc(r['title'])} <small>{esc(r['task_id'])}</small></h1>
+<p class="q"><b>Rubric question:</b> {esc(item['question'])}<br>
+Score from 0 to 10, where 10 means an excellent human facilitator could not do better.</p>
+<h2>Requests made</h2><ol>{requests}</ol>
+<h2>Final board</h2><figure>{svg or "<p>(no rendering)</p>"}</figure>
+<h2>What the AI said</h2><pre>{esc(item['said'] or '(nothing)')}</pre>
+<details><summary>Board elements as the judge sees them</summary><pre>{esc(item['board'])}</pre></details>
+</body></html>"""
+
+
+def human_judge(run: pathlib.Path, rejudge: bool = False, ask=input) -> dict:
+    """Walk every rubric item that still needs a human score. Returns counts."""
+    done = skipped = 0
+    for task in manifest(run)["tasks"]:
+        r = rubric(run, task)
+        if r is None:
+            continue
+        result = json.loads((run / task / "result.json").read_text())
+        for i, item in enumerate(r["items"]):
+            s = scores(run, task).get(str(i), {})
+            if "human" in s or (not rejudge and s.get("llm", {}).get("score") is not None):
+                continue
+            svg = result["svgs"].get(f"turn{item['turn']}")
+            page = run / task / f"review-{i}.html"
+            page.write_text(review_page(r, item, svg))
+            print(f"\n{r['title']} ({task}), item {i}\n  {item['question']}\n  review: {page}")
+            if "llm" in s and s["llm"].get("score") is not None:
+                print("  (an LLM judge already scored this; your score will be shown next to it)")
+            while True:
+                answer = ask("  score 0-10, s = skip, q = quit: ").strip().lower()
+                if answer in ("q", "s") or (answer.isdigit() and 0 <= int(answer) <= 10):
+                    break
+                print("  please enter a whole number from 0 to 10, s or q")
+            if answer == "q":
+                return {"scored": done, "skipped": skipped, "quit": True}
+            if answer == "s":
+                skipped += 1
+                continue
+            reason = ask("  one-line reason: ").strip()
+            record_score(run, task, i, "human", int(answer), reason)
+            done += 1
+    return {"scored": done, "skipped": skipped, "quit": False}
+
+
+def cmd_judge(a):
+    run = pathlib.Path(a.run)
+    counts = human_judge(run, a.rejudge)
+    print(json.dumps(counts))
+    aggregate([run])
+
+
+def apply_judgement(run: pathlib.Path, task: str, r: dict, mode: str) -> bool:
+    """Put judge scores into a result's rubric checks and recompute its scores. False if any is unscored."""
+    rubric_items = rubric(run, task)
+    if rubric_items is None:
+        return True
+    judged = scores(run, task)
+    complete = True
+    for i, item in enumerate(rubric_items["items"]):
+        where = item["where"]
+        check = r["turns"][where[1]]["checks"][where[2]] if where[0] == "turn" else r["final_checks"][where[1]]
+        s = judged.get(str(i), {})
+        human, llm = s.get("human"), s.get("llm")
+        pick = human if human and human["score"] is not None else llm if llm and llm["score"] is not None else None
+        if pick is None:
+            complete = False
+            check["score"] = None
+            check["detail"] = ("awaiting human judgement" if mode == "human" else
+                               f"judge gave no score: {llm['reason']}" if llm else "awaiting judge")
+            continue
+        check["score"] = round(pick["score"] / 10, 4)
+        parts = [f"{who} {v['score']:g}/10: {v['reason']}" for who, v in (("human", human), ("llm", llm))
+                 if v and v["score"] is not None]
+        check["detail"] = "judge: " + " | ".join(parts)
+    for t in r["turns"]:
+        t["score"] = weighted(t["checks"])
+    r["score"] = weighted([c for t in r["turns"] for c in t["checks"]] + r["final_checks"]) if complete else None
+    return complete
+
+
 # -- commands --------------------------------------------------------------------
 
 def cmd_list(a):
@@ -182,8 +348,10 @@ def cmd_list(a):
 def cmd_new(a):
     cfg = settings(a)
     tasks = resolve(cfg["select"])
-    plan = {"select": cfg["select"], "model": cfg["model"], "tasks": [t["id"] for t in tasks],
-            "players": len(tasks), "concurrency": cfg["concurrency"]}
+    plan = {"select": cfg["select"], "model": cfg["model"], "judge": cfg["judge"],
+            "tasks": [t["id"] for t in tasks], "players": len(tasks),
+            "judges": sum(t["rubric"] for t in tasks) if cfg["judge"] == "llm" else 0,
+            "concurrency": cfg["concurrency"]}
     if a.dry_run:
         print(json.dumps({"dry_run": True, **plan}))
         return
@@ -211,11 +379,23 @@ def next_tasks(run: pathlib.Path, now: float | None = None) -> list[str]:
     return picked
 
 
+def judges_to_spawn(run: pathlib.Path) -> list[str]:
+    """Finished tasks that need an LLM judge and don't have one yet, marked so they're handed out once."""
+    picked = []
+    for task in manifest(run)["tasks"]:
+        marker = run / task / "judge.spawned"
+        if status(run, task)["state"] == "done" and llm_judge_pending(run, task) and not marker.exists():
+            marker.write_text(time.strftime("%Y-%m-%dT%H:%M:%S"))
+            picked.append(task)
+    return picked
+
+
 def cmd_next(a):
     run = pathlib.Path(a.run)
     picked = next_tasks(run)
     st = states(run)
-    print(json.dumps({"spawn": picked, "running": sum(s in ACTIVE for s in st.values()),
+    print(json.dumps({"spawn": picked, "judge": judges_to_spawn(run),
+                      "running": sum(s in ACTIVE for s in st.values()),
                       "pending": sum(s == "pending" for s in st.values()),
                       "finished": sum(s in FINAL for s in st.values()), "total": len(st)}))
 
@@ -243,8 +423,14 @@ def cmd_timing(a):
     run = pathlib.Path(a.run)
     d = run / a.task
     d.mkdir(parents=True, exist_ok=True)
-    (d / "timing.json").write_text(json.dumps({"total_tokens": a.tokens, "duration_ms": a.ms}))
-    print(json.dumps({"task": a.task, "recorded": True}))
+    name = "timing.json" if a.role == "player" else "judge_timing.json"
+    (d / name).write_text(json.dumps({"total_tokens": a.tokens, "duration_ms": a.ms}))
+    if a.role == "judge" and llm_judge_pending(run, a.task):
+        # the judge finished without scoring everything: close it out so the run can finish
+        for i, _ in enumerate(rubric(run, a.task)["items"]):
+            if "llm" not in scores(run, a.task).get(str(i), {}):
+                record_score(run, a.task, i, "llm", None, "judge finished without a score")
+    print(json.dumps({"task": a.task, "role": a.role, "recorded": True}))
 
 
 def resume(run: pathlib.Path) -> list[str]:
@@ -280,6 +466,11 @@ class Watcher:
 
     def poll(self, now: float | None = None) -> list[str]:
         st = states(self.run, now)
+        for task, s in st.items():
+            if s == "done" and llm_judge_pending(self.run, task):
+                st[task] = "judging"
+            elif s == "done" and self.last and self.last.get(task) == "judging":
+                st[task] = "judged"
         total = len(st)
         finished = sum(s in FINAL for s in st.values())
         if self.last is None:
@@ -309,9 +500,8 @@ def cmd_watch(a):
         time.sleep(a.interval)
 
 
-def cmd_aggregate(a):
-    runs = [pathlib.Path(r) for r in a.runs]
-    results, missing, configs = [], [], []
+def aggregate(runs: list[pathlib.Path]) -> dict:
+    results, missing, awaiting, configs = [], [], [], []
     for run in runs:
         m = manifest(run)
         configs.append(m["config"])
@@ -321,28 +511,41 @@ def cmd_aggregate(a):
                 missing.append(tid)
                 continue
             r = json.loads(f.read_text())
-            timing = run / tid / "timing.json"
-            if timing.exists():
-                r["stats"].update(json.loads(timing.read_text()))
+            if not apply_judgement(run, tid, r, m["config"]["judge"]):
+                awaiting.append(tid)
+            for name, key in (("timing.json", "total_tokens"), ("judge_timing.json", "judge_tokens")):
+                timing = run / tid / name
+                if timing.exists():
+                    r["stats"][key] = json.loads(timing.read_text())["total_tokens"]
             results.append(r)
     if not results:
         raise SystemExit("no finished tasks in " + ", ".join(map(str, runs)))
     models = sorted({c["model"] for c in configs})
+    judges = sorted({c["judge"] for c in configs})
     out = runs[0] if len(runs) == 1 else RUNS / f"combined-{time.strftime('%Y%m%d-%H%M%S')}"
     out.mkdir(parents=True, exist_ok=True)
     summary = summarize(results)
-    summary["agent"] = f"claude-code-subagents ({', '.join(models)})"
+    summary["agent"] = f"claude-code-subagents · {', '.join(models)} · judge: {', '.join(judges)}"
+    summary["judge"] = judges[0] if len(judges) == 1 else judges
     summary["runs"] = [str(r) for r in runs]
     summary["config"] = configs[0] if len(configs) == 1 else configs
     summary["missing"] = missing
-    tokens = [r["stats"]["total_tokens"] for r in results if "total_tokens" in r["stats"]]
-    summary["total_tokens"] = sum(tokens) if tokens else None
+    summary["awaiting_judgement"] = awaiting
+    player = [r["stats"]["total_tokens"] for r in results if "total_tokens" in r["stats"]]
+    judge = [r["stats"]["judge_tokens"] for r in results if "judge_tokens" in r["stats"]]
+    summary["total_tokens"] = sum(player) + sum(judge) if player or judge else None
     (out / "results.json").write_text(json.dumps(
         {"summary": summary, "results": [{k: v for k, v in r.items() if k != "svgs"} for r in results]}, indent=2))
     write_report(out / "report.html", summary, results)
-    print(json.dumps({"overall": summary["overall"], "by_category": summary["by_category"],
-                      "tasks": summary["tasks"], "missing": missing, "total_tokens": summary["total_tokens"],
-                      "report": str(out / "report.html")}))
+    report = {"overall": summary["overall"], "by_category": summary["by_category"], "judge": summary["judge"],
+              "tasks": summary["tasks"], "missing": missing, "awaiting_judgement": awaiting,
+              "total_tokens": summary["total_tokens"], "report": str(out / "report.html")}
+    print(json.dumps(report))
+    return report
+
+
+def cmd_aggregate(a):
+    aggregate([pathlib.Path(r) for r in a.runs])
 
 
 def main(argv=None):
@@ -353,6 +556,7 @@ def main(argv=None):
     p = sub.add_parser("new", help="create a run")
     p.add_argument("selector", nargs="?", help="task(s), category, smoke or all (default: config select)")
     p.add_argument("--model", help="model the players run on (default: config model)")
+    p.add_argument("--judge", choices=JUDGE_MODES, help="who grades rubric checks (default: config judge)")
     p.add_argument("--dry-run", action="store_true", help="show what would run, create nothing")
     p.add_argument("--config", help=argparse.SUPPRESS)
     p.set_defaults(fn=cmd_new)
@@ -368,6 +572,7 @@ def main(argv=None):
     p.add_argument("task")
     p.add_argument("--tokens", type=int, required=True)
     p.add_argument("--ms", type=int, required=True)
+    p.add_argument("--role", choices=("player", "judge"), default="player")
     p.set_defaults(fn=cmd_timing)
     p = sub.add_parser("resume", help="requeue a run's unfinished tasks")
     p.add_argument("run")
@@ -376,6 +581,22 @@ def main(argv=None):
     p.add_argument("run")
     p.add_argument("--interval", type=float, default=5.0)
     p.set_defaults(fn=cmd_watch)
+    p = sub.add_parser("rubric", help="print what the LLM judge grades for a task")
+    p.add_argument("run")
+    p.add_argument("task")
+    p.set_defaults(fn=cmd_rubric)
+    p = sub.add_parser("score", help="record a rubric score")
+    p.add_argument("run")
+    p.add_argument("task")
+    p.add_argument("item", type=int)
+    p.add_argument("score", type=float)
+    p.add_argument("reason")
+    p.add_argument("--judge", choices=("llm", "human"), default="llm")
+    p.set_defaults(fn=cmd_score)
+    p = sub.add_parser("judge", help="score rubric checks yourself")
+    p.add_argument("run")
+    p.add_argument("--rejudge", action="store_true", help="also re-score items an LLM judge already scored")
+    p.set_defaults(fn=cmd_judge)
     p = sub.add_parser("aggregate", help="merge one or more runs into a report")
     p.add_argument("runs", nargs="+")
     p.set_defaults(fn=cmd_aggregate)

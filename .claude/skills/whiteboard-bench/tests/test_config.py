@@ -100,3 +100,19 @@ def test_shipped_config_is_valid():
 def test_bad_numbers_are_errors(tmp_path, monkeypatch, capsys, line):
     with pytest.raises(SystemExit, match="whole number"):
         new(tmp_path, monkeypatch, capsys, "--dry-run", config=line + "\n")
+
+
+@pytest.mark.parametrize("mode", ["llm", "human", "off"])
+def test_judge_modes_resolve(tmp_path, monkeypatch, capsys, mode):
+    out = new(tmp_path, monkeypatch, capsys, "all", "--judge", mode, "--dry-run", config='judge = "llm"\n')
+    assert out["judge"] == mode
+    assert out["judges"] == (6 if mode == "llm" else 0)
+
+
+def test_judge_mode_from_config(tmp_path, monkeypatch, capsys):
+    assert new(tmp_path, monkeypatch, capsys, "09", "--dry-run", config='judge = "human"\n')["judge"] == "human"
+
+
+def test_bad_judge_mode_is_an_error(tmp_path, monkeypatch, capsys):
+    with pytest.raises(SystemExit, match="judge"):
+        new(tmp_path, monkeypatch, capsys, "--dry-run", config='judge = "robot"\n')

@@ -81,3 +81,33 @@ def test_player_definition_is_locked_down():
     for cmd in commands:
         rel = cmd.split('"$CLAUDE_PROJECT_DIR/')[1].rstrip('"')
         assert (root / rel).exists(), rel
+
+
+def bash(command):
+    return {"hook_event_name": "PreToolUse", "tool_name": "Bash", "tool_input": {"command": command}}
+
+
+def test_judge_guard_allows_only_the_judging_recipes():
+    assert run_hook("guard_judge.py", bash("just sub-rubric runs/x bs_yes_and")) is None
+    assert run_hook("guard_judge.py", bash('just sub-score runs/x bs_yes_and 0 7 "builds on each idea"')) is None
+    for cmd in ["cat tasks/11_bs_yes_and.json", "just sub-new all", "just sub-score runs/x t 0 7 \"ok\"; rm -rf /",
+                "just sub-rubric runs/x t && cat tasks/*", "just sub-score runs/x t 0 7 \"$(cat tasks/a)\"",
+                "just sub-rubric runs/x t > out"]:
+        out = run_hook("guard_judge.py", bash(cmd))
+        assert out["hookSpecificOutput"]["permissionDecision"] == "deny", cmd
+    out = run_hook("guard_judge.py", {"hook_event_name": "PreToolUse", "tool_name": "Read", "tool_input": {}})
+    assert out["hookSpecificOutput"]["permissionDecision"] == "deny"
+
+
+def test_judge_definition_is_locked_down():
+    import re
+
+    import yaml
+    from conftest import ROOT
+    text = (ROOT / ".claude" / "agents" / "wbench-judge.md").read_text()
+    fm = yaml.safe_load(re.match(r"^---\n(.*?)\n---\n", text, re.S).group(1))
+    assert fm["tools"] == "Bash" and fm["omitClaudeMd"] is True
+    cmd = fm["hooks"]["PreToolUse"][0]["hooks"][0]["command"]
+    assert (ROOT / cmd.split('"$CLAUDE_PROJECT_DIR/')[1].rstrip('"')).exists()
+    justfile = (ROOT / "justfile").read_text()
+    assert "\nsub-rubric run task:" in justfile and "\nsub-score run task item score reason:" in justfile

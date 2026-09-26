@@ -36,6 +36,7 @@ from mcp.server.stdio import stdio_server  # noqa: E402
 from wbench.agents.anthropic_agent import system_prompt  # noqa: E402
 from wbench.agents.base import Agent  # noqa: E402
 from wbench.harness import briefing, run_task  # noqa: E402
+from wbench.judge import board_as_text  # noqa: E402
 from wbench.render import render_svg  # noqa: E402
 from wbench.tools import TOOLS  # noqa: E402
 
@@ -75,6 +76,36 @@ class BridgeAgent(Agent):
                 self.turn_end = res
                 return
             self.outbox.put(("result", res))
+
+
+class RubricCapture:
+    """Stands in for the LLM judge during the run: records what a grader needs, scores nothing.
+
+    `wb.py` later applies an LLM judge's or a human's score to these checks.
+    The materials match what `wbench.judge.AnthropicJudge` would have seen.
+    """
+
+    def __init__(self):
+        self.items = []
+
+    def __call__(self, board, spec, ctx):
+        self.items.append({
+            "question": spec["question"],
+            "label": spec.get("label", "rubric"),
+            "weight": spec.get("weight", 1.0),
+            "requests": [t["prompt"] for t in ctx.task["turns"][: ctx.turn]],
+            "said": "\n".join(m["text"] for m in ctx.messages),
+            "board": board_as_text(board),
+            "turn": ctx.turn,
+        })
+        return None, "awaiting judgement"
+
+
+def rubric_positions(result: dict) -> list[list]:
+    """Where each rubric check sits in a result, in grading order: ["turn", i, j] or ["final", j]."""
+    where = [["turn", i, j] for i, t in enumerate(result["turns"])
+             for j, c in enumerate(t["checks"]) if c["check"] == "rubric"]
+    return where + [["final", j] for j, c in enumerate(result["final_checks"]) if c["check"] == "rubric"]
 
 
 class Session:
@@ -121,6 +152,8 @@ class Session:
         os.close(fd)
         self.task = json.loads((ROOT / "tasks" / manifest["files"][task_id]).read_text())
         self.task_dir = task_dir
+        self.judge_mode = manifest["config"].get("judge", "llm")
+        self.capture = RubricCapture() if self.judge_mode != "off" else None
         self.turn = 1
         self._status("playing")
         self.agent = BridgeAgent()
@@ -134,7 +167,7 @@ class Session:
 
     def _run(self):
         try:
-            result = run_task(self.task, self.agent, render=render_svg)
+            result = run_task(self.task, self.agent, judge=self.capture, render=render_svg)
         except Exception as e:  # the harness itself failed: surface it rather than hang
             self._status("error", error=f"{type(e).__name__}: {e}")
             self.agent.outbox.put(("error", f"{type(e).__name__}: {e}"))
@@ -143,6 +176,11 @@ class Session:
             return
         if self._owner():
             (self.task_dir / "result.json").write_text(json.dumps(result))
+            if self.capture and self.capture.items:
+                items = [{"where": w, **item} for w, item in zip(rubric_positions(result), self.capture.items, strict=True)]
+                (self.task_dir / "rubric.json").write_text(json.dumps(
+                    {"task_id": self.task["id"], "title": self.task["title"], "mode": self.judge_mode,
+                     "items": items}, indent=2))
             self._status("done")
         self.agent.outbox.put(("complete", None))
 
